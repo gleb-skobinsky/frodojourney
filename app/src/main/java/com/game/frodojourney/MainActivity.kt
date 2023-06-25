@@ -1,10 +1,15 @@
 package com.game.frodojourney
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.indication
@@ -34,19 +39,25 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import com.game.frodojourney.character.CharacterTurned
 import com.game.frodojourney.ui.theme.FrodoJourneyTheme
 import com.game.frodojourney.viewmodel.MainViewModel
 import kotlinx.coroutines.delay
+
 
 class MainActivity : ComponentActivity() {
     private val gameViewModel: MainViewModel by viewModels()
@@ -64,7 +75,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun App(viewModel: MainViewModel) {
     val character by viewModel.character.collectAsState()
-    val characterBitmap = ImageBitmap.imageResource(R.drawable.user)
+    val characterBitmap = ImageBitmap.imageResourceWithSize(R.drawable.luke, 400, 382)
     val density = LocalDensity.current
     val configuration = LocalConfiguration.current
     viewModel.setPlayableField(
@@ -76,10 +87,17 @@ fun App(viewModel: MainViewModel) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
+        Image(
+            painter = painterResource(R.drawable.map_sw2),
+            contentDescription = "Game map",
+            contentScale = ContentScale.FillHeight,
+            modifier = Modifier.fillMaxSize()
+        )
         Canvas(modifier = Modifier.fillMaxSize()) {
+            val offset = character.position.toOffset(density)
             drawImage(
-                image = characterBitmap,
-                topLeft = character.position.toOffset(density)
+                image = characterBitmap.toTurn(character.turned),
+                topLeft = offset
             )
         }
         Box(
@@ -154,8 +172,16 @@ enum class ControllerArrow(
     fun move(viewModel: MainViewModel) {
         println("Player moved")
         when (this) {
-            LEFT -> viewModel.updateCharacterPosX((-30).dp)
-            RIGHT -> viewModel.updateCharacterPosX(30.dp)
+            LEFT -> {
+                viewModel.updateCharacterPosX((-30).dp)
+                viewModel.turnCharacter(CharacterTurned.LEFT)
+            }
+
+            RIGHT -> {
+                viewModel.updateCharacterPosX(30.dp)
+                viewModel.turnCharacter(CharacterTurned.RIGHT)
+            }
+
             UP -> viewModel.updateCharacterPosY((-30).dp)
             DOWN -> viewModel.updateCharacterPosY(30.dp)
         }
@@ -164,4 +190,23 @@ enum class ControllerArrow(
 
 fun DpOffset.toOffset(density: Density) = with(density) { Offset(x.toPx(), y.toPx()) }
 
+@Composable
+fun ImageBitmap.Companion.imageResourceWithSize(
+    @DrawableRes id: Int,
+    width: Int,
+    height: Int
+): ImageBitmap {
+    val res = LocalContext.current.resources
+    return remember(id) {
+        val bitmap = BitmapFactory.decodeResource(res, id)
+        val scaledBitmap = Bitmap.createScaledBitmap(bitmap, width, height, true)
+        scaledBitmap.asImageBitmap()
+    }
+}
 
+fun ImageBitmap.toTurn(turned: CharacterTurned): ImageBitmap {
+    val m = Matrix()
+    m.preScale(turned.mirrorX, 1f)
+    val src: Bitmap = this.asAndroidBitmap()
+    return Bitmap.createBitmap(src, 0, 0, src.width, src.height, m, false).asImageBitmap()
+}
