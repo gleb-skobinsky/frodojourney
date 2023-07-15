@@ -11,7 +11,7 @@ import com.game.frodojourney.character.CharacterTurned
 
 
 data class PixelMainCharacter(
-    override val position: DpOffset = DpOffset.Zero,
+    override val position: DpOffset,
     override val turned: CharacterTurned = CharacterTurned.RIGHT,
 ) : GenericCharacter {
     override fun DrawScope.draw(animationFrame: ImageBitmap) {

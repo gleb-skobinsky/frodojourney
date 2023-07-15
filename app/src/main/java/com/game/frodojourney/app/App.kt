@@ -1,7 +1,6 @@
 package com.game.frodojourney.app
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
@@ -25,13 +24,12 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import com.game.frodojourney.R
 import com.game.frodojourney.app.character.LukeRun
 import com.game.frodojourney.character.CharacterTurned
 import com.game.frodojourney.viewmodel.MainViewModel
@@ -47,8 +45,10 @@ val centerDpOffset = DpOffset(controllerCenterX.dp, controllerCenterY.dp)
 
 @Composable
 fun App(viewModel: MainViewModel) {
+    viewModel.localDensity = LocalDensity.current
     val character by viewModel.character.collectAsState()
     val characterFrame by viewModel.characterFrame.collectAsState()
+    val mapState by viewModel.mapState.collectAsState()
     val configuration = LocalConfiguration.current
     viewModel.setPlayableField(
         DpSize(
@@ -59,26 +59,16 @@ fun App(viewModel: MainViewModel) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        Image(
-            painter = painterResource(R.drawable.corusant),
-            contentDescription = "Game map",
-            contentScale = ContentScale.FillHeight,
-            modifier = Modifier.fillMaxSize()
-        )
         var joystickDrag by remember { mutableStateOf(DpOffset.Zero) }
-        var characterIsMoving by remember {
-            mutableStateOf(false)
-        }
-        var characterStepX by remember {
-            mutableStateOf(0.dp)
-        }
-        var characterStepY by remember {
-            mutableStateOf(0.dp)
-        }
-        var characterTurn by remember {
-            mutableStateOf(CharacterTurned.RIGHT)
-        }
+        var characterIsMoving by remember { mutableStateOf(false) }
+        var characterStepX by remember { mutableStateOf(0.dp) }
+        var characterStepY by remember { mutableStateOf(0.dp) }
+        var characterTurn by remember { mutableStateOf(CharacterTurned.RIGHT) }
         Canvas(modifier = Modifier.fillMaxSize()) {
+            drawImage(
+                image = mapState.map.mapImage,
+                topLeft = mapState.viewPortOffset.toOffset(Density(density))
+            )
             with(character) {
                 characterFrame?.let { draw(it) }
             }
