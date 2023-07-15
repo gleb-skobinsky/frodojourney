@@ -32,6 +32,8 @@ import com.game.frodojourney.character.CharacterTurned
 import com.game.frodojourney.viewmodel.MainViewModel
 import kotlinx.coroutines.delay
 
+const val characterStep = 10
+
 @Composable
 fun BoxScope.ControllerArrowButton(
     arrow: ControllerArrow,
@@ -94,21 +96,21 @@ enum class ControllerArrow(
     fun move(viewModel: MainViewModel) {
         when (this) {
             LEFT -> {
-                viewModel.updateCharacterPosX((-30).dp)
+                viewModel.updateCharacterPosX((-characterStep).dp)
                 viewModel.turnCharacter(CharacterTurned.LEFT)
             }
 
             RIGHT -> {
-                viewModel.updateCharacterPosX(30.dp)
+                viewModel.updateCharacterPosX(characterStep.dp)
                 viewModel.turnCharacter(CharacterTurned.RIGHT)
             }
 
             UP -> {
-                viewModel.updateCharacterPosY((-30).dp)
+                viewModel.updateCharacterPosY((-characterStep).dp)
             }
 
             DOWN -> {
-                viewModel.updateCharacterPosY(30.dp)
+                viewModel.updateCharacterPosY(characterStep.dp)
             }
         }
     }

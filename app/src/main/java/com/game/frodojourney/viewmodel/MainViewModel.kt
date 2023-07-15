@@ -1,5 +1,6 @@
 package com.game.frodojourney.viewmodel
 
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -9,18 +10,26 @@ import com.game.frodojourney.character.CharacterTurned
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class MainViewModel : ViewModel() {
-    private val _playableField: MutableStateFlow<DpSize> = MutableStateFlow(DpSize.Zero)
+data class MainViewModel(
+    private val _playableField: MutableStateFlow<DpSize> = MutableStateFlow(DpSize.Zero),
+    private val _character: MutableStateFlow<PixelMainCharacter> =
+        MutableStateFlow(PixelMainCharacter()),
+    val character: StateFlow<PixelMainCharacter> = _character,
+    private val _characterFrame: MutableStateFlow<ImageBitmap?> = MutableStateFlow(null),
+    val characterFrame: StateFlow<ImageBitmap?> = _characterFrame,
+) : ViewModel() {
+
     fun setPlayableField(size: DpSize) {
         _playableField.value = size
     }
 
-    private val _character: MutableStateFlow<PixelMainCharacter> =
-        MutableStateFlow(PixelMainCharacter())
-    val character: StateFlow<PixelMainCharacter> = _character
-
     fun setCharacter(character: PixelMainCharacter) {
         _character.value = character
+    }
+
+
+    fun setFrame(frame: ImageBitmap) {
+        _characterFrame.value = frame
     }
 
     fun updateCharacterPosX(delta: Dp) {
