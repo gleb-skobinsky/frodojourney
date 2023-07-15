@@ -8,6 +8,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -42,9 +45,12 @@ fun App(viewModel: MainViewModel) {
             contentScale = ContentScale.FillHeight,
             modifier = Modifier.fillMaxSize()
         )
+        var characterFrame by remember {
+            mutableStateOf(LukeRun.calm)
+        }
         Canvas(modifier = Modifier.fillMaxSize()) {
             with(character) {
-                draw()
+                draw(characterFrame)
             }
         }
         Box(
@@ -59,8 +65,14 @@ fun App(viewModel: MainViewModel) {
                     )
                 }
         ) {
-            enumValues<ControllerArrow>().forEach {
-                ControllerArrowButton(it, viewModel)
+            enumValues<ControllerArrow>().forEach { arrow ->
+                ControllerArrowButton(
+                    arrow = arrow,
+                    viewModel = viewModel,
+                    onAnimate = {
+                        characterFrame = it
+                    }
+                )
             }
         }
     }

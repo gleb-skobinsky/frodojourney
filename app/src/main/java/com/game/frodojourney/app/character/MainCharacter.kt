@@ -13,52 +13,25 @@ import com.game.frodojourney.app.toOffset
 import com.game.frodojourney.character.CharacterTurned
 
 
-data class MainCharacter(
-    val body: CharacterBody? = null,
-    override val position: DpOffset = DpOffset.Zero,
-    override val turned: CharacterTurned = CharacterTurned.RIGHT
-) : GenericCharacter {
-    override fun DrawScope.draw() {
-        body?.let {
-            with(it) {
-                drawBody(position.toOffset(Density(density)), turned)
-            }
-        }
-    }
-}
-
 data class PixelMainCharacter(
     override val position: DpOffset = DpOffset.Zero,
     override val turned: CharacterTurned = CharacterTurned.RIGHT,
 ) : GenericCharacter {
-    override fun DrawScope.draw() {
+    override fun DrawScope.draw(animationFrame: ImageBitmap) {
         val density = Density(density)
         val offset = position.toOffset(density)
-        val frame = LukeRun.current
-        val center = offset.x + (frame.width / 2f)
+        val center = offset.x + (animationFrame.width / 2f)
         scale(scaleX = turned.mirrorX, scaleY = 1f, pivot = Offset(center, offset.y)) {
             drawImage(
-                image = frame,
+                image = animationFrame,
                 topLeft = offset
             )
         }
     }
 }
 
-object CharacterBitmaps {
-    lateinit var body: ImageBitmap
-    lateinit var arm: ImageBitmap
-    lateinit var leg: ImageBitmap
-
-    @Composable
-    fun Init() {
-        body = ImageBitmap.imageResourceWithSize(R.drawable.ashoka_p_body)
-        arm = ImageBitmap.imageResourceWithSize(R.drawable.ashoka_arm)
-        leg = ImageBitmap.imageResourceWithSize(R.drawable.ashoka_p_leg)
-    }
-}
-
 object LukeRun {
+    lateinit var calm: ImageBitmap
     lateinit var frame0: ImageBitmap
     lateinit var frame1: ImageBitmap
     lateinit var frame2: ImageBitmap
@@ -81,7 +54,8 @@ object LukeRun {
         frame6 = ImageBitmap.imageResourceWithSize(R.drawable.ls_run_6)
         frame7 = ImageBitmap.imageResourceWithSize(R.drawable.ls_run_7)
         frame8 = ImageBitmap.imageResourceWithSize(R.drawable.ls_run_8)
-        current = frame0
+        calm = ImageBitmap.imageResourceWithSize(R.drawable.lc_calm)
+        current = calm
     }
 
     operator fun iterator() = this
@@ -89,6 +63,11 @@ object LukeRun {
     operator fun hasNext(): Boolean = true
 
     operator fun next(): ImageBitmap = when (current) {
+        calm -> {
+            current = frame0
+            frame0
+        }
+
         frame0 -> {
             current = frame1
             frame1
@@ -135,5 +114,10 @@ object LukeRun {
         }
 
         else -> frame0
+    }
+
+    fun reset(): ImageBitmap {
+        current = calm
+        return calm
     }
 }

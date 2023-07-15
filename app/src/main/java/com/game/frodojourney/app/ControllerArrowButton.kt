@@ -23,9 +23,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
+import com.game.frodojourney.app.character.LukeRun
 import com.game.frodojourney.character.CharacterTurned
 import com.game.frodojourney.viewmodel.MainViewModel
 import kotlinx.coroutines.delay
@@ -33,7 +35,8 @@ import kotlinx.coroutines.delay
 @Composable
 fun BoxScope.ControllerArrowButton(
     arrow: ControllerArrow,
-    viewModel: MainViewModel
+    viewModel: MainViewModel,
+    onAnimate: (ImageBitmap) -> Unit
 ) {
     var longPressActive by remember { mutableStateOf(false) }
     val interactionSource = remember { MutableInteractionSource() }
@@ -57,15 +60,24 @@ fun BoxScope.ControllerArrowButton(
                         interactionSource.emit(PressInteraction.Release(press))
                         longPressActive = false
                     },
-                    onTap = { arrow.move(viewModel) }
+                    onTap = {
+                        arrow.move(viewModel)
+                    }
                 )
             }
     )
-    LaunchedEffect(key1 = longPressActive) {
+    LaunchedEffect(longPressActive) {
         while (longPressActive) {
             arrow.move(viewModel)
-            delay(300L)
+            delay(100L)
         }
+    }
+    LaunchedEffect(longPressActive) {
+        while (longPressActive) {
+            onAnimate(LukeRun.next())
+            delay(100L)
+        }
+        onAnimate(LukeRun.reset())
     }
 }
 
