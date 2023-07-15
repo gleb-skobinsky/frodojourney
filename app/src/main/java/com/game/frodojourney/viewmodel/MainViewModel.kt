@@ -4,8 +4,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
+import com.game.frodojourney.app.character.PixelMainCharacter
 import com.game.frodojourney.character.CharacterTurned
-import com.game.frodojourney.character.Frodo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -15,11 +15,12 @@ class MainViewModel : ViewModel() {
         _playableField.value = size
     }
 
-    private val _character: MutableStateFlow<Frodo> =
-        MutableStateFlow(Frodo())
-    val character: StateFlow<Frodo> = _character
-    fun setCharacter(newCharacter: Frodo) {
-        _character.value = newCharacter
+    private val _character: MutableStateFlow<PixelMainCharacter> =
+        MutableStateFlow(PixelMainCharacter())
+    val character: StateFlow<PixelMainCharacter> = _character
+
+    fun setCharacter(character: PixelMainCharacter) {
+        _character.value = character
     }
 
     fun updateCharacterPosX(delta: Dp) {
