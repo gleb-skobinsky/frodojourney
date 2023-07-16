@@ -1,11 +1,11 @@
 package com.game.frodojourney.viewmodel
 
+import android.content.res.Configuration.ORIENTATION_UNDEFINED
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import com.game.frodojourney.app.character.PixelMainCharacter
@@ -22,44 +22,57 @@ data class MapState(
 typealias Coordinate = Float
 
 data class ViewData(
+    val density: Density = Density(1f),
     val focus: Coordinates = Coordinates(750f, 1550f),
-    val size: Size = Size(1f, 1f)
+    val size: Size = Size.Zero,
+    val orientation: Int = ORIENTATION_UNDEFINED
 ) {
     fun Coordinates.toOffset() = Offset(
         x = (x - focus.x) + size.width / 2,
         y = (y - focus.y) + size.height / 2
     )
+
+    fun Offset.toCoordinates() = Coordinates(
+        (x - size.width / 2) / 1f + focus.x,
+        -(y - size.height / 2) / 1f + focus.y
+    )
 }
 
-const val borderToMap = 30
-const val borderToMapTwoTimes = 60
+const val borderToMap = 30f
+const val borderToMapTwoTimes = 60f
+
+fun calculateInitialFocus(
+    size: Size
+): Coordinates {
+    return Coordinates(
+        x = size.width / 2,
+        y = size.height / 2
+    )
+}
 
 data class MainViewModel(
-    var localDensity: Density = Density(1f),
-    var configuration: Int = 1,
     private val _mapState: MutableStateFlow<MapState> = MutableStateFlow(MapState()),
     val mapState: MutableStateFlow<MapState> = _mapState,
-    private val _playableField: MutableStateFlow<DpSize> = MutableStateFlow(DpSize.Zero),
-    private val _character: MutableStateFlow<PixelMainCharacter> =
-        MutableStateFlow(PixelMainCharacter(_mapState.value.map.characterInitialPosition)),
-    val character: StateFlow<PixelMainCharacter> = _character,
     private val _characterFrame: MutableStateFlow<ImageBitmap?> = MutableStateFlow(null),
     val characterFrame: StateFlow<ImageBitmap?> = _characterFrame,
-
     private val _viewData: MutableStateFlow<ViewData> = MutableStateFlow(ViewData()),
-    val viewData: StateFlow<ViewData> = _viewData
+    val viewData: StateFlow<ViewData> = _viewData,
+    private val _character: MutableStateFlow<PixelMainCharacter> = MutableStateFlow(
+        PixelMainCharacter()
+    ),
+    val character: StateFlow<PixelMainCharacter> = _character,
 ) : ViewModel() {
 
-    fun resizeMap(size: Size) {
-        _viewData.value = _viewData.value.copy(size = size)
-    }
-
-    fun setPlayableField(size: DpSize, localConfiguration: Int) {
-        _playableField.value = size
-        if (configuration != localConfiguration) {
+    fun updateOrientation(orientation: Int) {
+        val prev = _viewData.value.orientation
+        _viewData.value = _viewData.value.copy(orientation = orientation)
+        if (prev != ORIENTATION_UNDEFINED && prev != orientation) {
             _viewData.value = _viewData.value.copy(focus = _character.value.position)
         }
-        configuration = localConfiguration
+    }
+
+    fun setViewData(viewData: ViewData) {
+        _viewData.value = viewData
     }
 
 
@@ -67,14 +80,18 @@ data class MainViewModel(
         _characterFrame.value = frame
     }
 
+    fun setInitialCharacterPosition(position: Coordinates) {
+        _character.value = _character.value.copy(position = position)
+    }
+
     fun updateCharacterPosX(delta: Dp) {
         with(_viewData.value) {
             val characterPositionAsOffset = _character.value.position.toOffset()
-            with(localDensity) {
+            with(_viewData.value.density) {
                 val characterXDp = characterPositionAsOffset.x.toDp()
-                if (characterXDp + delta in (borderToMap.dp..(_playableField.value.width - borderToMapTwoTimes.dp))) {
+                if (characterXDp + delta in (borderToMap.dp..(_viewData.value.size.width.toDp() - borderToMapTwoTimes.dp))) {
                     changePositionX(delta)
-                } else {
+                } else if (xWouldBeInBounds(delta)) {
                     changePositionX(delta)
                     updateViewDataX(delta)
                 }
@@ -82,14 +99,24 @@ data class MainViewModel(
         }
     }
 
+    private fun xWouldBeInBounds(delta: Dp): Boolean {
+        val halfSize = (_viewData.value.size.width / 2)
+        return _viewData.value.focus.x + delta.value in halfSize.._mapState.value.map.mapImage.width.toFloat() - halfSize
+    }
+
+    private fun yWouldBeInBounds(delta: Dp): Boolean {
+        val halfSize = (_viewData.value.size.height / 2)
+        return _viewData.value.focus.y + delta.value in halfSize.._mapState.value.map.mapImage.height.toFloat() - halfSize
+    }
+
     fun updateCharacterPosY(delta: Dp) {
         with(_viewData.value) {
             val characterPositionAsOffset = _character.value.position.toOffset()
-            with(localDensity) {
+            with(_viewData.value.density) {
                 val characterYDp = characterPositionAsOffset.y.toDp()
-                if (characterYDp + delta in (borderToMap.dp..(_playableField.value.height - borderToMapTwoTimes.dp))) {
+                if (characterYDp + delta in (borderToMap.dp..(_viewData.value.size.height.toDp() - borderToMapTwoTimes.dp))) {
                     changePositionY(delta)
-                } else {
+                } else if (yWouldBeInBounds(delta)) {
                     changePositionY(delta)
                     updateViewDataY(delta)
                 }

@@ -10,7 +10,7 @@ import com.game.frodojourney.viewmodel.ViewData
 
 
 data class PixelMainCharacter(
-    override val position: Coordinates,
+    override val position: Coordinates = Coordinates.Zero,
     override val turned: CharacterTurned = CharacterTurned.RIGHT,
 ) : GenericCharacter {
     override fun DrawScope.draw(animationFrame: ImageBitmap, viewData: ViewData) {

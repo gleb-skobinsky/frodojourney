@@ -21,17 +21,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.DpOffset
-import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.game.frodojourney.app.character.LukeRun
 import com.game.frodojourney.character.CharacterTurned
+import com.game.frodojourney.viewmodel.Coordinates
 import com.game.frodojourney.viewmodel.MainViewModel
+import com.game.frodojourney.viewmodel.ViewData
+import com.game.frodojourney.viewmodel.calculateInitialFocus
 import kotlinx.coroutines.delay
 import kotlin.math.abs
 import kotlin.math.pow
@@ -44,19 +47,11 @@ val centerDpOffset = DpOffset(controllerCenterX.dp, controllerCenterY.dp)
 
 @Composable
 fun App(viewModel: MainViewModel) {
-    viewModel.localDensity = LocalDensity.current
     val character by viewModel.character.collectAsState()
     val characterFrame by viewModel.characterFrame.collectAsState()
     val mapState by viewModel.mapState.collectAsState()
     val viewData by viewModel.viewData.collectAsState()
     val configuration = LocalConfiguration.current
-    viewModel.setPlayableField(
-        DpSize(
-            configuration.screenWidthDp.dp,
-            configuration.screenHeightDp.dp
-        ),
-        configuration.orientation
-    )
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -66,8 +61,22 @@ fun App(viewModel: MainViewModel) {
         var characterStepY by remember { mutableStateOf(0.dp) }
         var characterTurn by remember { mutableStateOf(CharacterTurned.RIGHT) }
         Canvas(modifier = Modifier.fillMaxSize()) {
-            if (viewData.size != size) {
-                viewModel.resizeMap(size)
+            if (viewData.size == Size.Zero) {
+                val posX = size.width / 7f
+                val posY = size.height - (size.height / 7f)
+                viewModel.setInitialCharacterPosition(Coordinates(posX, posY))
+                viewModel.setViewData(
+                    ViewData(
+                        density = Density(density),
+                        focus = calculateInitialFocus(size),
+                        size = size
+                    )
+                )
+            } else if (viewData.size != size) {
+                viewModel.setViewData(viewData.copy(size = size))
+                viewModel.updateOrientation(
+                    configuration.orientation
+                )
             }
             with(viewData) {
                 drawImage(
