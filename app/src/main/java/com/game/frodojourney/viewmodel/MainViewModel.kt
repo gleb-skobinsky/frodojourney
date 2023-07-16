@@ -11,7 +11,6 @@ import androidx.lifecycle.ViewModel
 import com.game.frodojourney.app.character.PixelMainCharacter
 import com.game.frodojourney.app.map.Corusant
 import com.game.frodojourney.app.map.GameMap
-import com.game.frodojourney.app.toDpOffset
 import com.game.frodojourney.character.CharacterTurned
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -57,11 +56,10 @@ data class MainViewModel(
 
     fun setPlayableField(size: DpSize, localConfiguration: Int) {
         _playableField.value = size
+        if (configuration != localConfiguration) {
+            _viewData.value = _viewData.value.copy(focus = _character.value.position)
+        }
         configuration = localConfiguration
-    }
-
-    fun setCharacter(character: PixelMainCharacter) {
-        _character.value = character
     }
 
 
@@ -109,15 +107,6 @@ data class MainViewModel(
         val prevOffset = _viewData.value.focus
         _viewData.value =
             _viewData.value.copy(focus = prevOffset.copy(y = prevOffset.y + delta.value))
-    }
-
-    private fun yIsAtEdge(characterPos: Dp, delta: Dp): Boolean {
-        with(_viewData.value) {
-            with(localDensity) {
-                val focusDp = _viewData.value.focus.toOffset().toDpOffset(localDensity).y
-                return characterPos + delta <= 0.dp || characterPos + delta >= focusDp
-            }
-        }
     }
 
     private fun changePositionY(delta: Dp) {
