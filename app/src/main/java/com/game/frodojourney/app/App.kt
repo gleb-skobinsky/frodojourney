@@ -26,7 +26,6 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -49,12 +48,14 @@ fun App(viewModel: MainViewModel) {
     val character by viewModel.character.collectAsState()
     val characterFrame by viewModel.characterFrame.collectAsState()
     val mapState by viewModel.mapState.collectAsState()
+    val viewData by viewModel.viewData.collectAsState()
     val configuration = LocalConfiguration.current
     viewModel.setPlayableField(
         DpSize(
             configuration.screenWidthDp.dp,
             configuration.screenHeightDp.dp
-        )
+        ),
+        configuration.orientation
     )
     Box(
         modifier = Modifier.fillMaxSize()
@@ -65,12 +66,18 @@ fun App(viewModel: MainViewModel) {
         var characterStepY by remember { mutableStateOf(0.dp) }
         var characterTurn by remember { mutableStateOf(CharacterTurned.RIGHT) }
         Canvas(modifier = Modifier.fillMaxSize()) {
-            drawImage(
-                image = mapState.map.mapImage,
-                topLeft = mapState.viewPortOffset.toOffset(Density(density))
-            )
+            if (viewData.size != size) {
+                viewModel.resizeMap(size)
+            }
+            with(viewData) {
+                drawImage(
+                    image = mapState.map.mapImage,
+                    topLeft = mapState.map.mapPosition.toOffset()
+                )
+            }
+
             with(character) {
-                characterFrame?.let { draw(it) }
+                characterFrame?.let { draw(it, viewData) }
             }
         }
         Box(

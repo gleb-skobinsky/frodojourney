@@ -12,6 +12,8 @@ import androidx.compose.ui.unit.DpOffset
 
 fun DpOffset.toOffset(density: Density) = with(density) { Offset(x.toPx(), y.toPx()) }
 
+fun Offset.toDpOffset(density: Density) = with(density) { DpOffset(x.toDp(), y.toDp()) }
+
 
 fun ImageBitmap.Companion.imageResourceWithSize(
     @DrawableRes id: Int,

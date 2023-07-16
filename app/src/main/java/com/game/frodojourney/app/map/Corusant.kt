@@ -1,12 +1,13 @@
 package com.game.frodojourney.app.map
 
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.unit.DpOffset
-import androidx.compose.ui.unit.dp
+import com.game.frodojourney.R
+import com.game.frodojourney.viewmodel.Coordinates
 
 
 data class Corusant(
-    override val startingPosition: DpOffset = DpOffset(0.dp, (-30).dp),
-    override val characterInitialPosition: DpOffset = DpOffset(30.dp, 700.dp),
-    override val mapImage: ImageBitmap = MapResources.corusant
-): GenericMap
+    override val characterInitialPosition: Coordinates = Coordinates(100f, 2600f),
+    override val mapPosition: Coordinates = Coordinates.Zero,
+    override val mapImage: ImageBitmap = MapResources.corusant,
+    override val imageResource: Int = R.drawable.corusant
+) : GameMap
