@@ -31,8 +31,16 @@ data class MainViewModel(
     private val _character: MutableStateFlow<PixelMainCharacter> = MutableStateFlow(
         PixelMainCharacter()
     ),
-    val character: StateFlow<PixelMainCharacter> = _character,
+    val character: StateFlow<PixelMainCharacter> = _character
 ) : ViewModel() {
+    fun startMovement(turn: CharacterTurned, stepX: Dp, stepY: Dp) {
+        _character.value =
+            _character.value.copy(isMoving = true, turned = turn, stepX = stepX, stepY = stepY)
+    }
+
+    fun stopMovement() {
+        _character.value = _character.value.copy(isMoving = false)
+    }
 
     fun updateOrientation(orientation: Int) {
         val prev = _viewData.value.orientation

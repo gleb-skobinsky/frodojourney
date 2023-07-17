@@ -15,7 +15,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -36,6 +36,7 @@ import com.game.frodojourney.app.character.LukeRun
 import com.game.frodojourney.character.CharacterTurned
 import com.game.frodojourney.viewmodel.MainViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.pow
 
@@ -52,14 +53,11 @@ fun App(viewModel: MainViewModel) {
     val mapState by viewModel.mapState.collectAsState()
     val viewData by viewModel.viewData.collectAsState()
     val configuration = LocalConfiguration.current
+    val characterScope = rememberCoroutineScope()
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        var joystickDrag by remember { mutableStateOf(DpOffset.Zero) }
-        var characterIsMoving by remember { mutableStateOf(false) }
-        var characterStepX by remember { mutableStateOf(0.dp) }
-        var characterStepY by remember { mutableStateOf(0.dp) }
-        var characterTurn by remember { mutableStateOf(CharacterTurned.RIGHT) }
+        val joystickDrag = remember { mutableStateOf(DpOffset.Zero) }
         Canvas(modifier = Modifier.fillMaxSize()) {
             if (viewData.size == Size.Zero) {
                 val posX = size.width / 7f
@@ -113,7 +111,7 @@ fun App(viewModel: MainViewModel) {
             }
             Row(
                 Modifier
-                    .offset(joystickDrag.x, joystickDrag.y)
+                    .offset(joystickDrag.value.x, joystickDrag.value.y)
                     .size(56.dp)
                     .align(Alignment.Center)
                     .shadow(20.dp, RoundedCornerShape(50))
@@ -121,19 +119,18 @@ fun App(viewModel: MainViewModel) {
                     .pointerInput(Unit) {
                         detectDragGestures(
                             onDragEnd = {
-                                characterIsMoving = false
-                                joystickDrag = DpOffset.Zero
+                                viewModel.stopMovement()
+                                joystickDrag.value = DpOffset.Zero
                             },
                             onDragCancel = {
-                                characterIsMoving = false
-                                joystickDrag = DpOffset.Zero
+                                viewModel.stopMovement()
+                                joystickDrag.value = DpOffset.Zero
                             }
                         ) { _, dragAmount ->
-                            characterIsMoving = true
                             val dragAmountDp = DpOffset(dragAmount.x.toDp(), dragAmount.y.toDp())
-                            val againstCenter = joystickDrag + dragAmountDp
+                            val againstCenter = joystickDrag.value + dragAmountDp
                             val newOffset = centerDpOffset + againstCenter
-                            if (newOffset.isInBounds()) joystickDrag += dragAmountDp
+                            if (newOffset.isInBounds()) joystickDrag.value += dragAmountDp
                             val absoluteDrag = DpOffset(
                                 abs(againstCenter.x.value).dp,
                                 abs(againstCenter.y.value).dp
@@ -142,40 +139,53 @@ fun App(viewModel: MainViewModel) {
                                 absoluteDrag.x > absoluteDrag.y -> {
                                     val ratio = absoluteDrag.y / absoluteDrag.x
                                     val xDirectionIsPositive = againstCenter.x > 0.dp
-                                    characterTurn =
+                                    val characterTurn =
                                         if (xDirectionIsPositive) CharacterTurned.RIGHT else CharacterTurned.LEFT
-                                    characterStepX =
+                                    val characterStepX =
                                         if (xDirectionIsPositive) characterStep.dp else (-characterStep).dp
-                                    characterStepY =
+                                    val characterStepY =
                                         if (dragAmount.y > 0) (characterStep * ratio).dp else (-characterStep * ratio).dp
+                                    characterScope.launch {
+                                        viewModel.startMovement(
+                                            characterTurn,
+                                            characterStepX,
+                                            characterStepY
+                                        )
+                                    }
                                 }
 
                                 absoluteDrag.y > absoluteDrag.x -> {
                                     val ratio = absoluteDrag.x / absoluteDrag.y
                                     val xDirectionIsPositive = againstCenter.x > 0.dp
-                                    characterTurn =
+                                    val characterTurn =
                                         if (xDirectionIsPositive) CharacterTurned.RIGHT else CharacterTurned.LEFT
-                                    characterStepX =
+                                    val characterStepX =
                                         if (xDirectionIsPositive) (characterStep * ratio).dp else (-characterStep * ratio).dp
-                                    characterStepY =
+                                    val characterStepY =
                                         if (dragAmount.y > 0) characterStep.dp else (-characterStep).dp
+                                    characterScope.launch {
+                                        viewModel.startMovement(
+                                            characterTurn,
+                                            characterStepX,
+                                            characterStepY
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
             ) {}
         }
-
-        LaunchedEffect(characterIsMoving) {
-            while (characterIsMoving) {
-                viewModel.turnCharacter(characterTurn)
-                viewModel.updateCharacterPosX(characterStepX)
-                viewModel.updateCharacterPosY(characterStepY)
+        LaunchedEffect(key1 = character.isMoving) {
+            while (character.isMoving) {
+                viewModel.turnCharacter(character.turned)
+                viewModel.updateCharacterPosX(character.stepX)
+                viewModel.updateCharacterPosY(character.stepY)
                 delay(50L)
             }
         }
-        LaunchedEffect(characterIsMoving) {
-            while (characterIsMoving) {
+        LaunchedEffect(key1 = character.isMoving) {
+            while (character.isMoving) {
                 viewModel.setFrame(LukeRun.next())
                 delay(100L)
             }
