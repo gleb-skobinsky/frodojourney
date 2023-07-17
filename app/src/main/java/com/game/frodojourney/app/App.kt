@@ -29,12 +29,12 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import com.game.frodojourney.app.canvas.Coordinates
+import com.game.frodojourney.app.canvas.ViewData
+import com.game.frodojourney.app.canvas.calculateInitialFocus
 import com.game.frodojourney.app.character.LukeRun
 import com.game.frodojourney.character.CharacterTurned
-import com.game.frodojourney.viewmodel.Coordinates
 import com.game.frodojourney.viewmodel.MainViewModel
-import com.game.frodojourney.viewmodel.ViewData
-import com.game.frodojourney.viewmodel.calculateInitialFocus
 import kotlinx.coroutines.delay
 import kotlin.math.abs
 import kotlin.math.pow

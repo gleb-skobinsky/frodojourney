@@ -1,4 +1,4 @@
-package com.game.frodojourney.app
+package com.game.frodojourney.app.canvas
 
 import android.content.res.Resources
 import android.graphics.Bitmap

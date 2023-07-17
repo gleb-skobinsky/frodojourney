@@ -2,7 +2,7 @@ package com.game.frodojourney.app.map
 
 import androidx.compose.ui.graphics.ImageBitmap
 import com.game.frodojourney.R
-import com.game.frodojourney.viewmodel.Coordinates
+import com.game.frodojourney.app.canvas.Coordinates
 
 
 data class Corusant(

@@ -1,13 +1,12 @@
 package com.game.frodojourney.viewmodel
 
 import android.content.res.Configuration.ORIENTATION_UNDEFINED
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
+import com.game.frodojourney.app.canvas.Coordinates
+import com.game.frodojourney.app.canvas.ViewData
 import com.game.frodojourney.app.character.PixelMainCharacter
 import com.game.frodojourney.app.map.Corusant
 import com.game.frodojourney.app.map.GameMap
@@ -19,36 +18,8 @@ data class MapState(
     val map: GameMap = Corusant()
 )
 
-typealias Coordinate = Float
-
-data class ViewData(
-    val density: Density = Density(1f),
-    val focus: Coordinates = Coordinates(750f, 1550f),
-    val size: Size = Size.Zero,
-    val orientation: Int = ORIENTATION_UNDEFINED
-) {
-    fun Coordinates.toOffset() = Offset(
-        x = (x - focus.x) + size.width / 2,
-        y = (y - focus.y) + size.height / 2
-    )
-
-    fun Offset.toCoordinates() = Coordinates(
-        (x - size.width / 2) / 1f + focus.x,
-        -(y - size.height / 2) / 1f + focus.y
-    )
-}
-
 const val borderToMap = 30f
 const val borderToMapTwoTimes = 60f
-
-fun calculateInitialFocus(
-    size: Size
-): Coordinates {
-    return Coordinates(
-        x = size.width / 2,
-        y = size.height / 2
-    )
-}
 
 data class MainViewModel(
     private val _mapState: MutableStateFlow<MapState> = MutableStateFlow(MapState()),
@@ -153,11 +124,3 @@ data class MainViewModel(
     }
 }
 
-data class Coordinates(
-    val x: Coordinate,
-    val y: Coordinate
-) {
-    companion object {
-        val Zero = Coordinates(0f, 0f)
-    }
-}

@@ -3,7 +3,7 @@ package com.game.frodojourney.app.character
 import android.content.res.Resources
 import androidx.compose.ui.graphics.ImageBitmap
 import com.game.frodojourney.R
-import com.game.frodojourney.app.imageResourceWithSize
+import com.game.frodojourney.app.canvas.imageResourceWithSize
 
 object LukeRun {
     lateinit var calm: ImageBitmap
