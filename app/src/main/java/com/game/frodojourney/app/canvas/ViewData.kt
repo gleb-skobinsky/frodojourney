@@ -9,7 +9,7 @@ data class ViewData(
     val density: Density = Density(1f),
     val focus: Coordinates = Coordinates(750f, 1550f),
     val size: Size = Size.Zero,
-    val orientation: Int = Configuration.ORIENTATION_UNDEFINED
+    val orientation: Int = Configuration.ORIENTATION_PORTRAIT
 ) {
     fun Coordinates.toOffset() = Offset(
         x = (x - focus.x) + size.width / 2,

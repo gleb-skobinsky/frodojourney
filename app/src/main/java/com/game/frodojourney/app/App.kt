@@ -15,7 +15,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -33,10 +32,10 @@ import com.game.frodojourney.app.canvas.Coordinates
 import com.game.frodojourney.app.canvas.ViewData
 import com.game.frodojourney.app.canvas.calculateInitialFocus
 import com.game.frodojourney.app.character.LukeRun
+import com.game.frodojourney.app.character.PixelMainCharacter
 import com.game.frodojourney.character.CharacterTurned
 import com.game.frodojourney.viewmodel.MainViewModel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.pow
 
@@ -53,7 +52,6 @@ fun App(viewModel: MainViewModel) {
     val mapState by viewModel.mapState.collectAsState()
     val viewData by viewModel.viewData.collectAsState()
     val configuration = LocalConfiguration.current
-    val characterScope = rememberCoroutineScope()
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -63,6 +61,7 @@ fun App(viewModel: MainViewModel) {
                 val posX = size.width / 7f
                 val posY = size.height - (size.height / 7f)
                 viewModel.setInitialCharacterPosition(Coordinates(posX, posY))
+                viewModel.updateOrientation(configuration.orientation)
                 viewModel.setViewData(
                     ViewData(
                         density = Density(density),
@@ -145,13 +144,11 @@ fun App(viewModel: MainViewModel) {
                                         if (xDirectionIsPositive) characterStep.dp else (-characterStep).dp
                                     val characterStepY =
                                         if (dragAmount.y > 0) (characterStep * ratio).dp else (-characterStep * ratio).dp
-                                    characterScope.launch {
-                                        viewModel.startMovement(
-                                            characterTurn,
-                                            characterStepX,
-                                            characterStepY
-                                        )
-                                    }
+                                    viewModel.startMovement(
+                                        characterTurn,
+                                        characterStepX,
+                                        characterStepY
+                                    )
                                 }
 
                                 absoluteDrag.y > absoluteDrag.x -> {
@@ -163,34 +160,53 @@ fun App(viewModel: MainViewModel) {
                                         if (xDirectionIsPositive) (characterStep * ratio).dp else (-characterStep * ratio).dp
                                     val characterStepY =
                                         if (dragAmount.y > 0) characterStep.dp else (-characterStep).dp
-                                    characterScope.launch {
-                                        viewModel.startMovement(
-                                            characterTurn,
-                                            characterStepX,
-                                            characterStepY
-                                        )
-                                    }
+                                    viewModel.startMovement(
+                                        characterTurn,
+                                        characterStepX,
+                                        characterStepY
+                                    )
                                 }
                             }
                         }
                     }
             ) {}
         }
-        LaunchedEffect(key1 = character.isMoving) {
-            while (character.isMoving) {
+        HandleMovementAndAnimation(
+            character = character,
+            onMove = {
                 viewModel.turnCharacter(character.turned)
                 viewModel.updateCharacterPosX(character.stepX)
                 viewModel.updateCharacterPosY(character.stepY)
-                delay(50L)
-            }
-        }
-        LaunchedEffect(key1 = character.isMoving) {
-            while (character.isMoving) {
+            },
+            onAnimate = {
                 viewModel.setFrame(LukeRun.next())
-                delay(100L)
+            },
+            onComplete = {
+                viewModel.setFrame(LukeRun.reset())
             }
-            viewModel.setFrame(LukeRun.reset())
+        )
+    }
+}
+
+@Composable
+fun HandleMovementAndAnimation(
+    character: PixelMainCharacter,
+    onMove: () -> Unit,
+    onAnimate: () -> Unit,
+    onComplete: () -> Unit
+) {
+    LaunchedEffect(key1 = character.isMoving) {
+        while (character.isMoving) {
+            onMove()
+            delay(50L)
         }
+    }
+    LaunchedEffect(key1 = character.isMoving) {
+        while (character.isMoving) {
+            onAnimate()
+            delay(100L)
+        }
+        onComplete()
     }
 }
 

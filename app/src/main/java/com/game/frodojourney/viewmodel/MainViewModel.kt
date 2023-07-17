@@ -1,10 +1,10 @@
 package com.game.frodojourney.viewmodel
 
-import android.content.res.Configuration.ORIENTATION_UNDEFINED
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
+import com.game.frodojourney.app.canvas.Coordinate
 import com.game.frodojourney.app.canvas.Coordinates
 import com.game.frodojourney.app.canvas.ViewData
 import com.game.frodojourney.app.character.PixelMainCharacter
@@ -42,12 +42,11 @@ data class MainViewModel(
         _character.value = _character.value.copy(isMoving = false)
     }
 
-    fun updateOrientation(orientation: Int) {
-        val prev = _viewData.value.orientation
-        _viewData.value = _viewData.value.copy(orientation = orientation)
-        if (prev != ORIENTATION_UNDEFINED && prev != orientation) {
-            _viewData.value = _viewData.value.copy(focus = _character.value.position)
+    fun updateOrientation(newOrientation: Int) {
+        if (_viewData.value.orientation != newOrientation) {
+            _viewData.value = _viewData.value.copy(focus = Coordinates(xOverBound(), yOverBound()))
         }
+        _viewData.value = _viewData.value.copy(orientation = newOrientation)
     }
 
     fun setViewData(viewData: ViewData) {
@@ -81,6 +80,28 @@ data class MainViewModel(
     private fun xWouldBeInBounds(delta: Dp): Boolean {
         val halfSize = (_viewData.value.size.width / 2)
         return _viewData.value.focus.x + delta.value in halfSize.._mapState.value.map.mapImage.width.toFloat() - halfSize
+    }
+
+    private fun xOverBound(): Coordinate {
+        val halfSize = (_viewData.value.size.width / 2)
+        val endOfAvailable = _mapState.value.map.mapImage.width.toFloat() - halfSize
+        var pos = _character.value.position.x
+        when {
+            pos < halfSize -> pos = halfSize
+            pos > endOfAvailable -> pos = endOfAvailable
+        }
+        return pos
+    }
+
+    private fun yOverBound(): Coordinate {
+        val halfSize = (_viewData.value.size.height / 2)
+        val endOfAvailable = _mapState.value.map.mapImage.height.toFloat() - halfSize
+        var pos = _character.value.position.y
+        when {
+            pos < halfSize -> pos = halfSize
+            pos > endOfAvailable -> pos = endOfAvailable
+        }
+        return pos
     }
 
     private fun yWouldBeInBounds(delta: Dp): Boolean {
