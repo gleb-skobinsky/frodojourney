@@ -31,7 +31,7 @@ data class MainViewModel(
     private val _character: MutableStateFlow<PixelMainCharacter> = MutableStateFlow(
         PixelMainCharacter()
     ),
-    val character: StateFlow<PixelMainCharacter> = _character
+    val character: StateFlow<PixelMainCharacter> = _character,
 ) : ViewModel() {
     fun startMovement(turn: CharacterTurned, stepX: Dp, stepY: Dp) {
         _character.value =
