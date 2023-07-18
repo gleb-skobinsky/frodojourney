@@ -5,11 +5,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.unit.DpOffset
 import com.game.frodojourney.app.character.LukeRun
 import com.game.frodojourney.app.composables.GamePlayingField
 import com.game.frodojourney.app.composables.HandleMovementAndAnimation
@@ -22,9 +19,6 @@ fun App(viewModel: MainViewModel) {
     val characterFrame by viewModel.characterFrame.collectAsState()
     val mapState by viewModel.mapState.collectAsState()
     val viewData by viewModel.viewData.collectAsState()
-    val joystickDrag = remember {
-        mutableStateOf(DpOffset.Zero)
-    }
     val configuration = LocalConfiguration.current
     Box(
         modifier = Modifier.fillMaxSize()
@@ -38,8 +32,7 @@ fun App(viewModel: MainViewModel) {
             characterFrame = characterFrame
         )
         MainGamingController(
-            viewModel = viewModel,
-            joystickDrag = joystickDrag
+            viewModel = viewModel
         )
         HandleMovementAndAnimation(
             character = character,

@@ -9,7 +9,10 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -36,8 +39,7 @@ val centerDpOffset = DpOffset(controllerCenterX.dp, controllerCenterY.dp)
 
 @Composable
 fun BoxScope.MainGamingController(
-    viewModel: MainViewModel,
-    joystickDrag: MutableState<DpOffset>
+    viewModel: MainViewModel
 ) {
     Box(
         modifier = Modifier
@@ -61,18 +63,20 @@ fun BoxScope.MainGamingController(
                 }
             )
         }
-        Joystick(joystickDrag, viewModel)
+        Joystick(viewModel)
     }
 }
 
 @Composable
 private fun BoxScope.Joystick(
-    joystickDrag: MutableState<DpOffset>,
     viewModel: MainViewModel
 ) {
+    var joystickDrag by remember {
+        mutableStateOf(DpOffset.Zero)
+    }
     Row(
         Modifier
-            .offset(joystickDrag.value.x, joystickDrag.value.y)
+            .offset(joystickDrag.x, joystickDrag.y)
             .size(56.dp)
             .align(Alignment.Center)
             .shadow(20.dp, RoundedCornerShape(50))
@@ -81,17 +85,17 @@ private fun BoxScope.Joystick(
                 detectDragGestures(
                     onDragEnd = {
                         viewModel.stopMovement()
-                        joystickDrag.value = DpOffset.Zero
+                        joystickDrag = DpOffset.Zero
                     },
                     onDragCancel = {
                         viewModel.stopMovement()
-                        joystickDrag.value = DpOffset.Zero
+                        joystickDrag = DpOffset.Zero
                     }
                 ) { _, dragAmount ->
                     val dragAmountDp = DpOffset(dragAmount.x.toDp(), dragAmount.y.toDp())
-                    val againstCenter = joystickDrag.value + dragAmountDp
+                    val againstCenter = joystickDrag + dragAmountDp
                     val newOffset = centerDpOffset + againstCenter
-                    if (newOffset.isInBounds()) joystickDrag.value += dragAmountDp
+                    if (newOffset.isInBounds()) joystickDrag += dragAmountDp
                     val absoluteDrag = DpOffset(
                         abs(againstCenter.x.value).dp,
                         abs(againstCenter.y.value).dp
