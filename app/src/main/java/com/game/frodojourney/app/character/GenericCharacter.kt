@@ -10,6 +10,7 @@ import com.game.frodojourney.character.CharacterTurned
 interface GenericCharacter {
     val position: Coordinates
     val turned: CharacterTurned
+    val fighting: Boolean
 
     fun DrawScope.draw(animationFrame: ImageBitmap, viewData: ViewData)
 }

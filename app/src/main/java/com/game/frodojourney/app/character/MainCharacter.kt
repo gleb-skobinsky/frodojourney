@@ -14,6 +14,7 @@ import com.game.frodojourney.character.CharacterTurned
 data class PixelMainCharacter(
     override val position: Coordinates = Coordinates.Zero,
     override val turned: CharacterTurned = CharacterTurned.RIGHT,
+    override val fighting: Boolean = false,
     val isMoving: Boolean = false,
     val stepX: Dp = 0.dp,
     val stepY: Dp = 0.dp

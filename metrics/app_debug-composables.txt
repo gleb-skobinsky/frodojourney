@@ -1,0 +1,40 @@
+restartable skippable scheme("[androidx.compose.ui.UiComposable]") fun App(
+  stable viewModel: MainViewModel
+)
+restartable skippable scheme("[androidx.compose.ui.UiComposable]") fun LightSaberController(
+  stable <this>: BoxScope
+  unused stable viewModel: MainViewModel
+)
+restartable skippable scheme("[androidx.compose.ui.UiComposable]") fun GlowingBorder()
+restartable skippable scheme("[androidx.compose.ui.UiComposable]") fun ControllerArrowButton(
+  stable <this>: BoxScope
+  stable arrow: ControllerArrow
+  stable viewModel: MainViewModel
+  stable onAnimate: Function1<ImageBitmap, Unit>
+)
+restartable scheme("[androidx.compose.ui.UiComposable]") fun GamePlayingField(
+  stable viewData: ViewData
+  stable viewModel: MainViewModel
+  mapState: MapState
+  stable character: PixelMainCharacter
+  unstable characterFrame: ImageBitmap?
+)
+restartable skippable scheme("[androidx.compose.ui.UiComposable]") fun MainGamingController(
+  stable <this>: BoxScope
+  stable viewModel: MainViewModel
+)
+restartable skippable scheme("[androidx.compose.ui.UiComposable]") fun Joystick(
+  stable <this>: BoxScope
+  stable viewModel: MainViewModel
+)
+restartable skippable fun HandleMovementAndAnimation(
+  stable character: PixelMainCharacter
+  stable onMove: Function0<Unit>
+  stable onAnimate: Function0<Unit>
+  stable onComplete: Function0<Unit>
+)
+restartable skippable scheme("[0, [0]]") fun FrodoJourneyTheme(
+  stable darkTheme: Boolean = @dynamic isSystemInDarkTheme($composer, 0)
+  stable dynamicColor: Boolean = @dynamic LiveLiterals$ThemeKt.Boolean$param-dynamicColor$fun-FrodoJourneyTheme()
+  stable content: Function2<Composer, Int, Unit>
+)

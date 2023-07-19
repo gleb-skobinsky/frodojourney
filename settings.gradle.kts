@@ -13,4 +13,4 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "Frodo Journey"
-include ':app'
+include(":app")

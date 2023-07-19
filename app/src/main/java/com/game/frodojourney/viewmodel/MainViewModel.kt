@@ -1,5 +1,6 @@
 package com.game.frodojourney.viewmodel
 
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -21,6 +22,7 @@ data class MapState(
 const val borderToMap = 30f
 const val borderToMapTwoTimes = 60f
 
+@Stable
 data class MainViewModel(
     private val _mapState: MutableStateFlow<MapState> = MutableStateFlow(MapState()),
     val mapState: MutableStateFlow<MapState> = _mapState,
