@@ -5,7 +5,15 @@ import androidx.compose.ui.graphics.ImageBitmap
 import com.game.frodojourney.R
 import com.game.frodojourney.app.canvas.imageResourceWithSize
 
-object LukeRun {
+interface Animation {
+    fun load(resources: Resources)
+
+    fun next(): ImageBitmap
+
+    fun reset(): ImageBitmap
+}
+
+object LukeRun: Animation {
     lateinit var calm: ImageBitmap
     lateinit var frame0: ImageBitmap
     lateinit var frame1: ImageBitmap
@@ -17,7 +25,7 @@ object LukeRun {
     lateinit var frame7: ImageBitmap
     lateinit var frame8: ImageBitmap
     lateinit var current: ImageBitmap
-    fun load(resources: Resources) {
+    override fun load(resources: Resources) {
         frame0 = ImageBitmap.imageResourceWithSize(R.drawable.ls_run_0, resources)
         frame1 = ImageBitmap.imageResourceWithSize(R.drawable.ls_run_1, resources)
         frame2 = ImageBitmap.imageResourceWithSize(R.drawable.ls_run_2, resources)
@@ -31,11 +39,7 @@ object LukeRun {
         current = calm
     }
 
-    operator fun iterator() = this
-
-    operator fun hasNext(): Boolean = true
-
-    operator fun next(): ImageBitmap = when (current) {
+    override fun next(): ImageBitmap = when (current) {
         calm -> {
             current = frame0
             frame0
@@ -89,7 +93,7 @@ object LukeRun {
         else -> frame0
     }
 
-    fun reset(): ImageBitmap {
+    override fun reset(): ImageBitmap {
         current = calm
         return calm
     }

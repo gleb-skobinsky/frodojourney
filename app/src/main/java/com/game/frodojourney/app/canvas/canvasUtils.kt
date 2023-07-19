@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.annotation.DrawableRes
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.Density
@@ -13,6 +14,8 @@ import androidx.compose.ui.unit.DpOffset
 fun DpOffset.toOffset(density: Density) = with(density) { Offset(x.toPx(), y.toPx()) }
 
 fun Offset.toDpOffset(density: Density) = with(density) { DpOffset(x.toDp(), y.toDp()) }
+
+fun Size.toOffset() = Offset(width, height)
 
 
 fun ImageBitmap.Companion.imageResourceWithSize(
