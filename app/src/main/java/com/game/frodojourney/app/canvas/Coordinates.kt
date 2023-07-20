@@ -17,6 +17,10 @@ data class Coordinates(
         return Coordinates(x = x + value.width, y = y + value.height)
     }
 
+    operator fun plus(value: Coordinates): Coordinates {
+        return Coordinates(x + value.x, y + value.y)
+    }
+
     companion object {
         val Zero = Coordinates(0f, 0f)
     }

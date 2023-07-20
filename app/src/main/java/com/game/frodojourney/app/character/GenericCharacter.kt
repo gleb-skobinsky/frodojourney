@@ -7,10 +7,19 @@ import com.game.frodojourney.app.canvas.Coordinates
 import com.game.frodojourney.app.canvas.ViewData
 import com.game.frodojourney.character.CharacterTurned
 
+data class Weapon(
+    val position: Coordinates,
+    val image: ImageBitmap,
+    val rotation: Float = 0f
+)
+
 interface GenericCharacter {
     val position: Coordinates
     val turned: CharacterTurned
-    val fighting: Boolean
+    val isFighting: Boolean
+    val isMoving: Boolean
+    val characterFrame: ImageBitmap?
+    val weapon: Weapon?
 
     fun DrawScope.draw(animationFrame: ImageBitmap, viewData: ViewData)
 }

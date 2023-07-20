@@ -27,16 +27,13 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import com.game.frodojourney.R
 import com.game.frodojourney.app.canvas.toOffset
-import com.game.frodojourney.app.character.LukeRun
 import com.game.frodojourney.app.composables.GamePlayingField
-import com.game.frodojourney.app.composables.HandleMovementAndAnimation
 import com.game.frodojourney.app.composables.MainGamingController
 import com.game.frodojourney.viewmodel.MainViewModel
 
 @Composable
 fun App(viewModel: MainViewModel) {
     val character by viewModel.character.collectAsState()
-    val characterFrame by viewModel.characterFrame.collectAsState()
     val mapState by viewModel.mapState.collectAsState()
     val viewData by viewModel.viewData.collectAsState()
     Box(
@@ -46,26 +43,11 @@ fun App(viewModel: MainViewModel) {
             viewData = viewData,
             viewModel = viewModel,
             mapState = mapState,
-            character = character,
-            characterFrame = characterFrame
+            character = character
         )
         LightSaberController(viewModel)
         MainGamingController(
             viewModel = viewModel
-        )
-        HandleMovementAndAnimation(
-            character = character,
-            onMove = {
-                viewModel.turnCharacter(character.turned)
-                viewModel.updateCharacterPosX(character.stepX)
-                viewModel.updateCharacterPosY(character.stepY)
-            },
-            onAnimate = {
-                viewModel.setFrame(LukeRun.next())
-            },
-            onComplete = {
-                viewModel.setFrame(LukeRun.reset())
-            }
         )
     }
 }
@@ -82,7 +64,7 @@ fun BoxScope.LightSaberController(viewModel: MainViewModel) {
                 interactionSource = interactionSource,
                 indication = null
             ) {
-                println("Fight")
+                viewModel.fightWithLightSaber()
             }
     ) {
         GlowingBorder()

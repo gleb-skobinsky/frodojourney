@@ -5,15 +5,27 @@ import androidx.compose.ui.graphics.ImageBitmap
 import com.game.frodojourney.R
 import com.game.frodojourney.app.canvas.imageResourceWithSize
 
-interface Animation {
+interface LoadableResource {
+
     fun load(resources: Resources)
+}
+
+interface Animation {
 
     fun next(): ImageBitmap
 
     fun reset(): ImageBitmap
 }
 
-object LukeRun: Animation {
+object Weapons : LoadableResource {
+    lateinit var lightSaber: ImageBitmap
+
+    override fun load(resources: Resources) {
+        lightSaber = ImageBitmap.imageResourceWithSize(R.drawable.lightsaber_only, resources)
+    }
+}
+
+object LukeRun : Animation, LoadableResource {
     lateinit var calm: ImageBitmap
     lateinit var frame0: ImageBitmap
     lateinit var frame1: ImageBitmap

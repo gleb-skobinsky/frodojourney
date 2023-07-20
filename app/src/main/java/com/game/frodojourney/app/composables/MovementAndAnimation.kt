@@ -12,12 +12,14 @@ fun HandleMovementAndAnimation(
     onAnimate: () -> Unit,
     onComplete: () -> Unit
 ) {
+    /*
     LaunchedEffect(key1 = character.isMoving) {
         while (character.isMoving) {
             onMove()
             delay(50L)
         }
     }
+     */
     LaunchedEffect(key1 = character.isMoving) {
         while (character.isMoving) {
             onAnimate()
