@@ -39,20 +39,28 @@ data class MainViewModel(
     ),
     val character: StateFlow<PixelMainCharacter> = _character.asStateFlow(),
     private var movementJob: Job? = null,
-    private var animationJob: Job? = null
+    private var animationJob: Job? = null,
 ) : ViewModel() {
 
+    fun setFight(fighting: Boolean) {
+        _character.value = _character.value.copyWeaponAware(isFighting = fighting)
+    }
+
     fun fightWithLightSaber() {
+
         viewModelScope.launch {
-            _character.value = _character.value.copy(isFighting = true)
-            for (i in (1..15)) {
+            setFrame(LukeRun.removeWeapon())
+            setFight(true)
+            for (i in (1..30)) {
                 val prevWeapon = _character.value.weapon
                 _character.value =
-                    _character.value.copy(weapon = prevWeapon.copy(rotation = prevWeapon.rotation + 24f))
+                    _character.value.copyWeaponAware(weapon = prevWeapon.copy(rotation = i * 12f))
                 delay(16L)
             }
-            _character.value = _character.value.copy(isFighting = false)
+            setFight(false)
+            setFrame(LukeRun.reset())
         }
+
     }
 
     private fun launchMovementCoroutine() {
@@ -75,7 +83,12 @@ data class MainViewModel(
 
     fun startMovement(turn: CharacterTurned, stepX: Dp, stepY: Dp) {
         _character.value =
-            _character.value.copy(isMoving = true, turned = turn, stepX = stepX, stepY = stepY)
+            _character.value.copyWeaponAware(
+                isMoving = true,
+                turned = turn,
+                stepX = stepX,
+                stepY = stepY
+            )
         if (movementJob == null && animationJob == null) {
             launchMovementCoroutine()
         }
@@ -83,7 +96,7 @@ data class MainViewModel(
     }
 
     fun stopMovement() {
-        _character.value = _character.value.copy(isMoving = false)
+        _character.value = _character.value.copyWeaponAware(isMoving = false)
         movementJob = null
         animationJob = null
     }
@@ -101,11 +114,11 @@ data class MainViewModel(
 
 
     fun setFrame(frame: ImageBitmap) {
-        _character.value = _character.value.copy(characterFrame = frame)
+        _character.value = _character.value.copyWeaponAware(characterFrame = frame)
     }
 
     fun setInitialCharacterPosition(position: Coordinates) {
-        _character.value = _character.value.copy(position = position)
+        _character.value = _character.value.copyWeaponAware(position = position)
     }
 
     fun updateCharacterPosX(delta: Dp) {
@@ -185,17 +198,17 @@ data class MainViewModel(
     private fun changePositionY(delta: Dp) {
         val prevPos = _character.value.position
         _character.value =
-            _character.value.copy(position = prevPos.copy(y = prevPos.y + delta.value))
+            _character.value.copyWeaponAware(position = prevPos.copy(y = prevPos.y + delta.value))
     }
 
     private fun changePositionX(delta: Dp) {
         val prevPos = _character.value.position
         _character.value =
-            _character.value.copy(position = prevPos.copy(x = prevPos.x + delta.value))
+            _character.value.copyWeaponAware(position = prevPos.copy(x = prevPos.x + delta.value))
     }
 
     fun turnCharacter(turn: CharacterTurned) {
-        _character.value = _character.value.copy(turned = turn)
+        _character.value = _character.value.copyWeaponAware(turned = turn)
     }
 }
 

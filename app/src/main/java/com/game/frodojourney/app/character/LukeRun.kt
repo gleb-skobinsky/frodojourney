@@ -37,6 +37,7 @@ object LukeRun : Animation, LoadableResource {
     lateinit var frame7: ImageBitmap
     lateinit var frame8: ImageBitmap
     lateinit var current: ImageBitmap
+    lateinit var no_light_saber: ImageBitmap
     override fun load(resources: Resources) {
         frame0 = ImageBitmap.imageResourceWithSize(R.drawable.ls_run_0, resources)
         frame1 = ImageBitmap.imageResourceWithSize(R.drawable.ls_run_1, resources)
@@ -48,6 +49,7 @@ object LukeRun : Animation, LoadableResource {
         frame7 = ImageBitmap.imageResourceWithSize(R.drawable.ls_run_7, resources)
         frame8 = ImageBitmap.imageResourceWithSize(R.drawable.ls_run_8, resources)
         calm = ImageBitmap.imageResourceWithSize(R.drawable.lc_calm, resources)
+        no_light_saber = ImageBitmap.imageResourceWithSize(R.drawable.lc_calm_no_ls, resources)
         current = calm
     }
 
@@ -108,5 +110,9 @@ object LukeRun : Animation, LoadableResource {
     override fun reset(): ImageBitmap {
         current = calm
         return calm
+    }
+
+    fun removeWeapon(): ImageBitmap {
+        return no_light_saber
     }
 }

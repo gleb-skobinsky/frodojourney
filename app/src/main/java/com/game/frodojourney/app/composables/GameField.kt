@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.Density
 import com.game.frodojourney.app.canvas.Coordinates
@@ -48,15 +47,6 @@ fun GamePlayingField(
 
             with(character) {
                 draw(characterFrame, viewData)
-                val offset = weapon.position.toOffset()
-                rotate(weapon.rotation, pivot = offset.copy(y = offset.y + weapon.image.height)) {
-                    // drawRect(Color.Red, weapon.position.toOffset())
-                    drawImage(
-                        image = weapon.image,
-                        topLeft = weapon.position.toOffset()
-                    )
-                }
-
             }
         }
     }
