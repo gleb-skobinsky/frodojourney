@@ -148,8 +148,10 @@ data class MainViewModel(
     }
 
     private fun xWouldBeInBounds(delta: Dp): Boolean {
-        val halfSize = (_viewData.value.size.width / 2)
-        return _viewData.value.focus.x + delta.value in halfSize.._mapState.value.map.mapImage.width.toFloat() - halfSize
+        with(_viewData.value.density) {
+            val halfSize = (_viewData.value.size.width / 2)
+            return _viewData.value.focus.x + delta.toPx() in halfSize.._mapState.value.map.mapImage.width.toFloat() - halfSize
+        }
     }
 
     private fun xOverBound(): Coordinate {
@@ -179,8 +181,10 @@ data class MainViewModel(
     }
 
     private fun yWouldBeInBounds(delta: Dp): Boolean {
-        val halfSize = (_viewData.value.size.height / 2)
-        return _viewData.value.focus.y + delta.value in halfSize.._mapState.value.map.mapImage.height.toFloat() - halfSize
+        with(_viewData.value.density) {
+            val halfSize = (_viewData.value.size.height / 2)
+            return _viewData.value.focus.y + delta.toPx() in halfSize.._mapState.value.map.mapImage.height.toFloat() - halfSize
+        }
     }
 
     fun updateCharacterPosY(delta: Dp) {
