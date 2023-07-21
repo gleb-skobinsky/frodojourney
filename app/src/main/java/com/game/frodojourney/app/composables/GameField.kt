@@ -3,6 +3,7 @@ package com.game.frodojourney.app.composables
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalConfiguration
@@ -21,6 +22,11 @@ fun GamePlayingField(
     character: PixelMainCharacter
 ) {
     val configuration = LocalConfiguration.current
+    val objectsToDraw = remember(mapState.map.objects, character) {
+        with(viewData) {
+            mapState.map.objects.filter { it isLowerThan character }
+        }
+    }
     Canvas(modifier = Modifier.fillMaxSize()) {
         if (viewData.size == Size.Zero) {
             viewModel.setViewData(
@@ -50,6 +56,7 @@ fun GamePlayingField(
 
             with(mapState.map) {
                 drawFrontObjects(viewData)
+                drawObjects(objectsToDraw, viewData)
             }
         }
     }

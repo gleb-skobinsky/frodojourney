@@ -18,8 +18,10 @@ interface GenericCharacter {
     val turned: CharacterTurned
     val isFighting: Boolean
     val isMoving: Boolean
-    val characterFrame: ImageBitmap?
+    val characterFrame: ImageBitmap
     val weapon: Weapon?
+
+    fun characterBaseLine() = position.y + characterFrame.height
 
     fun DrawScope.draw(animationFrame: ImageBitmap, viewData: ViewData)
 }

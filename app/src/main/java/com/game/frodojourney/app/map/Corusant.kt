@@ -15,7 +15,8 @@ data class Corusant(
     override val mapImage: ImageBitmap = MapResources.corusant,
     override val imageResource: Int = R.drawable.corusant,
     override val imageSize: Size = Size(mapImage.width.toFloat(), mapImage.height.toFloat()),
-    override val frontObjects: List<MapObject> = corusantFrontObjects
+    override val frontObjects: List<MapObject> = corusantFrontObjects,
+    override val objects: List<MapObject> = corusantObjects
 ) : GameMap {
     override fun DrawScope.draw(viewData: ViewData) {
         with(viewData) {
@@ -29,6 +30,17 @@ data class Corusant(
     override fun DrawScope.drawFrontObjects(viewData: ViewData) {
         with(viewData) {
             for (obj in frontObjects) {
+                drawImage(
+                    image = obj.image,
+                    topLeft = obj.position.toOffset()
+                )
+            }
+        }
+    }
+
+    override fun DrawScope.drawObjects(filteredObjects: List<MapObject>, viewData: ViewData) {
+        with(viewData) {
+            for (obj in filteredObjects) {
                 drawImage(
                     image = obj.image,
                     topLeft = obj.position.toOffset()

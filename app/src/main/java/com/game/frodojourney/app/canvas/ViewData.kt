@@ -5,6 +5,8 @@ import androidx.compose.runtime.Stable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.unit.Density
+import com.game.frodojourney.app.character.GenericCharacter
+import com.game.frodojourney.app.map.MapObject
 
 @Stable
 data class ViewData(
@@ -29,5 +31,9 @@ data class ViewData(
             y = (y.toPx() - focus.y) + size.height / 2
         )
     }
+
+    infix fun MapObject.isLowerThan(character: GenericCharacter): Boolean =
+        character.characterBaseLine() < baseLine(density)
+
 }
 
