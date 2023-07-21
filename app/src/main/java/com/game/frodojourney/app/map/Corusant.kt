@@ -16,7 +16,8 @@ data class Corusant(
     override val imageResource: Int = R.drawable.corusant,
     override val imageSize: Size = Size(mapImage.width.toFloat(), mapImage.height.toFloat()),
     override val frontObjects: List<MapObject> = corusantFrontObjects,
-    override val objects: List<MapObject> = corusantObjects
+    override val objects: List<MapObject> = corusantObjects,
+    override val allowedArea: AllowedArea = AllowedArea(corusantEdges)
 ) : GameMap {
     override fun DrawScope.draw(viewData: ViewData) {
         with(viewData) {

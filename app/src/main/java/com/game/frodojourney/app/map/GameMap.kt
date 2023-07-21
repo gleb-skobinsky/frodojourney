@@ -14,6 +14,7 @@ interface GameMap {
     val imageSize: Size
     val frontObjects: List<MapObject>
     val objects: List<MapObject>
+    val allowedArea: AllowedArea
 
     fun DrawScope.draw(viewData: ViewData)
 

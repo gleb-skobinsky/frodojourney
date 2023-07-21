@@ -34,11 +34,6 @@ fun GamePlayingField(
                     size = size
                 )
             )
-            /*
-            val posX = size.width / 2.5f
-            val posY = size.height - (size.height / 5f)
-            viewModel.setInitialCharacterPosition(Coordinates(posX, posY))
-             */
             viewModel.updateOrientation(configuration.orientation)
         } else if (viewData.size != size) {
             viewModel.setViewData(viewData.copy(size = size))
@@ -46,19 +41,21 @@ fun GamePlayingField(
                 configuration.orientation
             )
         }
-        with(viewData) {
-            with(mapState.map) {
-                draw(viewData)
-            }
+        with(mapState.map) {
+            draw(viewData)
+        }
 
-            with(character) {
-                draw(characterFrame, viewData)
-            }
+        with(character) {
+            draw(characterFrame, viewData)
+        }
 
-            with(mapState.map) {
-                drawFrontObjects(viewData)
-                drawObjects(objectsToDraw, viewData)
-            }
+        with(mapState.map) {
+            drawFrontObjects(viewData)
+            drawObjects(objectsToDraw, viewData)
+        }
+
+        with(mapState.map.allowedArea) {
+            draw(viewData)
         }
     }
 }

@@ -5,16 +5,27 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
-import com.game.frodojourney.app.canvas.Coordinates
+import com.game.frodojourney.app.canvas.DpCoordinates
 import com.game.frodojourney.app.canvas.ViewData
 
 val corusantEdges = listOf(
-    Coordinates(0f, 790f),
-    Coordinates(130f, 700f),
+    DpCoordinates(200.dp, 833.dp),
+    DpCoordinates(30.dp, 833.dp),
+    DpCoordinates(30.dp, 770.dp),
+    DpCoordinates(130.dp, 700.dp),
+    DpCoordinates(220.dp, 550.dp),
+    DpCoordinates(180.dp, 510.dp),
+    DpCoordinates(180.dp, 420.dp),
+    DpCoordinates(400.dp, 560.dp),
+    DpCoordinates(300.dp, 660.dp),
+    DpCoordinates(300.dp, 660.dp),
+    DpCoordinates(250.dp, 740.dp),
+    DpCoordinates(270.dp, 760.dp),
+    DpCoordinates(200.dp, 833.dp),
 )
 
 data class AllowedArea(
-    val points: List<Coordinates>
+    val points: List<DpCoordinates>
 ) {
     fun DrawScope.draw(viewData: ViewData) {
         with(viewData) {
@@ -35,13 +46,15 @@ data class AllowedArea(
         }
     }
 
-    operator fun contains(value: Coordinates): Boolean {
+    operator fun contains(value: DpCoordinates): Boolean {
+        val valueYAsFloat = value.y.value
+        val valueXAsFloat = value.x.value
         var count = 0
         for (i in 1 until points.size) {
-            val (x1, y1) = points[i - 1].let { it.x to it.y }
-            val (x2, y2) = points[i].let { it.x to it.y }
-            if ((value.y < y1 != value.y < y2)
-                && value.x < (x1 + ((value.y - y1) / (y2 - y1)) * (x2 - x1))
+            val (x1, y1) = points[i - 1].let { it.x.value to it.y.value }
+            val (x2, y2) = points[i].let { it.x.value to it.y.value }
+            if ((valueYAsFloat < y1 != valueYAsFloat < y2)
+                && valueXAsFloat < (x1 + ((valueYAsFloat - y1) / (y2 - y1)) * (x2 - x1))
             ) {
                 count += 1
             }
