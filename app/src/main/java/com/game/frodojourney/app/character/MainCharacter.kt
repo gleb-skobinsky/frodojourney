@@ -17,7 +17,7 @@ val weaponCorrectionDifference = DpCoordinates(12.dp, 6.dp)
 
 @Stable
 data class PixelMainCharacter(
-    override val position: DpCoordinates = DpCoordinates(100.dp, 700.dp),
+    override val position: DpCoordinates = DpCoordinates(180.dp, 680.dp),
     override val turned: CharacterTurned = CharacterTurned.RIGHT,
     override val isFighting: Boolean = false,
     override val isMoving: Boolean = false,

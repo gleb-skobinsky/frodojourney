@@ -32,7 +32,7 @@ import com.game.frodojourney.character.CharacterTurned
 import com.game.frodojourney.viewmodel.MainViewModel
 import kotlinx.coroutines.delay
 
-const val characterStep = 10
+const val characterStep = 5
 
 @Composable
 fun BoxScope.ControllerArrowButton(

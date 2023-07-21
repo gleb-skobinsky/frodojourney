@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.game.frodojourney.app.canvas.Coordinate
 import com.game.frodojourney.app.canvas.Coordinates
+import com.game.frodojourney.app.canvas.DpCoordinates
 import com.game.frodojourney.app.canvas.ViewData
 import com.game.frodojourney.app.character.LukeRun
 import com.game.frodojourney.app.character.PixelMainCharacter
@@ -42,12 +43,11 @@ data class MainViewModel(
     private var animationJob: Job? = null,
 ) : ViewModel() {
 
-    fun setFight(fighting: Boolean) {
+    private fun setFight(fighting: Boolean) {
         _character.value = _character.value.copyWeaponAware(isFighting = fighting)
     }
 
     fun fightWithLightSaber() {
-
         viewModelScope.launch {
             setFrame(LukeRun.removeWeapon())
             setFight(true)
@@ -60,7 +60,6 @@ data class MainViewModel(
             setFight(false)
             setFrame(LukeRun.reset())
         }
-
     }
 
     private fun launchMovementCoroutine() {
@@ -69,7 +68,7 @@ data class MainViewModel(
                 turnCharacter(_character.value.turned)
                 updateCharacterPosX(_character.value.stepX)
                 updateCharacterPosY(_character.value.stepY)
-                delay(50L)
+                delay(16L)
             }
         }
         animationJob = viewModelScope.launch {
@@ -117,16 +116,32 @@ data class MainViewModel(
         _character.value = _character.value.copyWeaponAware(characterFrame = frame)
     }
 
+    private fun isInAllowedAreaX(delta: Dp): Boolean {
+        val prevPos = _character.value.position
+        val supposedPosX = prevPos.x + delta
+        val newPos = DpCoordinates(supposedPosX, prevPos.y)
+        return newPos in _mapState.value.map.allowedArea
+    }
+
+    private fun isInAllowedAreaY(delta: Dp): Boolean {
+        val prevPos = _character.value.position
+        val supposedPosY = prevPos.y + delta
+        val newPos = DpCoordinates(prevPos.x, supposedPosY)
+        return newPos in _mapState.value.map.allowedArea
+    }
+
     fun updateCharacterPosX(delta: Dp) {
-        with(_viewData.value) {
-            val characterPositionAsOffset = _character.value.position.toOffset()
-            with(_viewData.value.density) {
-                val characterXDp = characterPositionAsOffset.x.toDp()
-                if (characterXDp + delta in (borderToMap.dp..(_viewData.value.size.width.toDp() - borderToMapTwoTimes.dp))) {
-                    changePositionX(delta)
-                } else if (xWouldBeInBounds(delta)) {
-                    changePositionX(delta)
-                    updateViewDataX(delta)
+        if (isInAllowedAreaX(delta)) {
+            with(_viewData.value) {
+                val characterPositionAsOffset = _character.value.position.toOffset()
+                with(_viewData.value.density) {
+                    val characterYDp = characterPositionAsOffset.x.toDp()
+                    if (characterYDp + delta in (borderToMap.dp..(_viewData.value.size.width.toDp() - borderToMapTwoTimes.dp))) {
+                        changePositionX(delta)
+                    } else if (xWouldBeInBounds(delta)) {
+                        changePositionX(delta)
+                        updateViewDataX(delta)
+                    }
                 }
             }
         }
@@ -169,15 +184,17 @@ data class MainViewModel(
     }
 
     fun updateCharacterPosY(delta: Dp) {
-        with(_viewData.value) {
-            val characterPositionAsOffset = _character.value.position.toOffset()
-            with(_viewData.value.density) {
-                val characterYDp = characterPositionAsOffset.y.toDp()
-                if (characterYDp + delta in (borderToMap.dp..(_viewData.value.size.height.toDp() - borderToMapTwoTimes.dp))) {
-                    changePositionY(delta)
-                } else if (yWouldBeInBounds(delta)) {
-                    changePositionY(delta)
-                    updateViewDataY(delta)
+        if (isInAllowedAreaY(delta)) {
+            with(_viewData.value) {
+                val characterPositionAsOffset = _character.value.position.toOffset()
+                with(_viewData.value.density) {
+                    val characterYDp = characterPositionAsOffset.y.toDp()
+                    if (characterYDp + delta in (borderToMap.dp..(_viewData.value.size.height.toDp() - borderToMapTwoTimes.dp))) {
+                        changePositionY(delta)
+                    } else if (yWouldBeInBounds(delta)) {
+                        changePositionY(delta)
+                        updateViewDataY(delta)
+                    }
                 }
             }
         }

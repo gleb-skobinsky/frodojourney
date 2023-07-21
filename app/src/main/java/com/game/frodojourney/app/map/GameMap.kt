@@ -8,7 +8,6 @@ import com.game.frodojourney.app.canvas.ViewData
 
 interface GameMap {
     val mapPosition: Coordinates
-    val characterInitialPosition: Coordinates
     val mapImage: ImageBitmap
     val imageResource: Int
     val imageSize: Size

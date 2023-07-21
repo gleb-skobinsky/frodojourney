@@ -10,7 +10,6 @@ import com.game.frodojourney.app.canvas.ViewData
 
 @Immutable
 data class Corusant(
-    override val characterInitialPosition: Coordinates = Coordinates(100f, 2600f),
     override val mapPosition: Coordinates = Coordinates.Zero,
     override val mapImage: ImageBitmap = MapResources.corusant,
     override val imageResource: Int = R.drawable.corusant,
