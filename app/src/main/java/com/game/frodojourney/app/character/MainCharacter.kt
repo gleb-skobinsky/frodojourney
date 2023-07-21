@@ -8,16 +8,16 @@ import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.game.frodojourney.app.canvas.Coordinates
+import com.game.frodojourney.app.canvas.DpCoordinates
 import com.game.frodojourney.app.canvas.ViewData
 import com.game.frodojourney.character.CharacterTurned
 
 
-val weaponCorrectionDifference = Coordinates(42f, 21f)
+val weaponCorrectionDifference = DpCoordinates(12.dp, 6.dp)
 
 @Stable
 data class PixelMainCharacter(
-    override val position: Coordinates = Coordinates.Zero,
+    override val position: DpCoordinates = DpCoordinates(100.dp, 700.dp),
     override val turned: CharacterTurned = CharacterTurned.RIGHT,
     override val isFighting: Boolean = false,
     override val isMoving: Boolean = false,
@@ -31,7 +31,7 @@ data class PixelMainCharacter(
 ) : GenericCharacter {
 
     fun copyWeaponAware(
-        position: Coordinates = this.position,
+        position: DpCoordinates = this.position,
         turned: CharacterTurned = this.turned,
         isFighting: Boolean = this.isFighting,
         isMoving: Boolean = this.isMoving,

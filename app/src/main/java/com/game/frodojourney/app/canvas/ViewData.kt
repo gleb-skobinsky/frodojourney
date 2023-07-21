@@ -33,7 +33,7 @@ data class ViewData(
     }
 
     infix fun MapObject.isLowerThan(character: GenericCharacter): Boolean =
-        character.characterBaseLine() < baseLine(density)
+        character.characterBaseLine(density) < baseLine(density)
 
 }
 

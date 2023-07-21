@@ -117,9 +117,11 @@ data class MainViewModel(
         _character.value = _character.value.copyWeaponAware(characterFrame = frame)
     }
 
+    /*
     fun setInitialCharacterPosition(position: Coordinates) {
         _character.value = _character.value.copyWeaponAware(position = position)
     }
+     */
 
     fun updateCharacterPosX(delta: Dp) {
         with(_viewData.value) {
@@ -142,25 +144,29 @@ data class MainViewModel(
     }
 
     private fun xOverBound(): Coordinate {
-        val halfSize = (_viewData.value.size.width / 2)
-        val endOfAvailable = _mapState.value.map.mapImage.width.toFloat() - halfSize
-        var pos = _character.value.position.x
-        when {
-            pos < halfSize -> pos = halfSize
-            pos > endOfAvailable -> pos = endOfAvailable
+        with(_viewData.value.density) {
+            val halfSize = (_viewData.value.size.width / 2)
+            val endOfAvailable = _mapState.value.map.mapImage.width.toFloat() - halfSize
+            var pos = _character.value.position.x.toPx()
+            when {
+                pos < halfSize -> pos = halfSize
+                pos > endOfAvailable -> pos = endOfAvailable
+            }
+            return pos
         }
-        return pos
     }
 
     private fun yOverBound(): Coordinate {
-        val halfSize = (_viewData.value.size.height / 2)
-        val endOfAvailable = _mapState.value.map.mapImage.height.toFloat() - halfSize
-        var pos = _character.value.position.y
-        when {
-            pos < halfSize -> pos = halfSize
-            pos > endOfAvailable -> pos = endOfAvailable
+        with(_viewData.value.density) {
+            val halfSize = (_viewData.value.size.height / 2)
+            val endOfAvailable = _mapState.value.map.mapImage.height.toFloat() - halfSize
+            var pos = _character.value.position.y.toPx()
+            when {
+                pos < halfSize -> pos = halfSize
+                pos > endOfAvailable -> pos = endOfAvailable
+            }
+            return pos
         }
-        return pos
     }
 
     private fun yWouldBeInBounds(delta: Dp): Boolean {
@@ -184,27 +190,31 @@ data class MainViewModel(
     }
 
     private fun updateViewDataX(delta: Dp) {
-        val prevOffset = _viewData.value.focus
-        _viewData.value =
-            _viewData.value.copy(focus = prevOffset.copy(x = prevOffset.x + delta.value))
+        with(_viewData.value.density) {
+            val prevOffset = _viewData.value.focus
+            _viewData.value =
+                _viewData.value.copy(focus = prevOffset.copy(x = prevOffset.x + delta.toPx()))
+        }
     }
 
     private fun updateViewDataY(delta: Dp) {
-        val prevOffset = _viewData.value.focus
-        _viewData.value =
-            _viewData.value.copy(focus = prevOffset.copy(y = prevOffset.y + delta.value))
+        with(_viewData.value.density) {
+            val prevOffset = _viewData.value.focus
+            _viewData.value =
+                _viewData.value.copy(focus = prevOffset.copy(y = prevOffset.y + delta.toPx()))
+        }
     }
 
     private fun changePositionY(delta: Dp) {
         val prevPos = _character.value.position
         _character.value =
-            _character.value.copyWeaponAware(position = prevPos.copy(y = prevPos.y + delta.value))
+            _character.value.copyWeaponAware(position = prevPos.copy(y = prevPos.y + delta))
     }
 
     private fun changePositionX(delta: Dp) {
         val prevPos = _character.value.position
         _character.value =
-            _character.value.copyWeaponAware(position = prevPos.copy(x = prevPos.x + delta.value))
+            _character.value.copyWeaponAware(position = prevPos.copy(x = prevPos.x + delta))
     }
 
     fun turnCharacter(turn: CharacterTurned) {

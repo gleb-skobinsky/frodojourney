@@ -8,7 +8,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.Density
-import com.game.frodojourney.app.canvas.Coordinates
 import com.game.frodojourney.app.canvas.ViewData
 import com.game.frodojourney.app.character.PixelMainCharacter
 import com.game.frodojourney.viewmodel.MainViewModel
@@ -35,9 +34,11 @@ fun GamePlayingField(
                     size = size
                 )
             )
+            /*
             val posX = size.width / 2.5f
             val posY = size.height - (size.height / 5f)
             viewModel.setInitialCharacterPosition(Coordinates(posX, posY))
+             */
             viewModel.updateOrientation(configuration.orientation)
         } else if (viewData.size != size) {
             viewModel.setViewData(viewData.copy(size = size))
