@@ -54,9 +54,7 @@ fun GamePlayingField(
             drawObjects(objectsToDraw, viewData)
         }
 
-        with(mapState.map.allowedArea) {
-            draw(viewData)
-        }
+        // with(mapState.map.allowedArea) { draw(viewData) }
     }
 }
 
