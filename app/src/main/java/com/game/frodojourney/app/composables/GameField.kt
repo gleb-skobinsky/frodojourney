@@ -47,6 +47,10 @@ fun GamePlayingField(
             with(character) {
                 draw(characterFrame, viewData)
             }
+
+            with(mapState.map) {
+                drawFrontObjects(viewData)
+            }
         }
     }
 }

@@ -10,5 +10,5 @@ data class MapObject(
 )
 
 val corusantFrontObjects = listOf(
-    MapObject(DpCoordinates(0.dp, 550.dp), MapResources.corusantArch)
+    MapObject(DpCoordinates(0.dp, 587.dp), MapResources.corusantArch)
 )

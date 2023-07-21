@@ -15,4 +15,6 @@ interface GameMap {
     val frontObjects: List<MapObject>
 
     fun DrawScope.draw(viewData: ViewData)
+
+    fun DrawScope.drawFrontObjects(viewData: ViewData)
 }

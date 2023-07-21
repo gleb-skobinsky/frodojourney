@@ -25,4 +25,15 @@ data class Corusant(
             )
         }
     }
+
+    override fun DrawScope.drawFrontObjects(viewData: ViewData) {
+        with(viewData) {
+            for (obj in frontObjects) {
+                drawImage(
+                    image = obj.image,
+                    topLeft = obj.position.toOffset()
+                )
+            }
+        }
+    }
 }
