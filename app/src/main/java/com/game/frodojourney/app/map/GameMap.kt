@@ -10,4 +10,5 @@ interface GameMap {
     val mapImage: ImageBitmap
     val imageResource: Int
     val imageSize: Size
+    val frontObjects: List<MapObject>
 }

@@ -22,5 +22,12 @@ data class ViewData(
         (x - size.width / 2) / 1f + focus.x,
         -(y - size.height / 2) / 1f + focus.y
     )
+
+    fun DpCoordinates.toOffset() = with(density) {
+        Offset(
+            x = (x.toPx() - focus.x) + size.width / 2,
+            y = (y.toPx() - focus.y) + size.height / 2
+        )
+    }
 }
 

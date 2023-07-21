@@ -7,8 +7,10 @@ import com.game.frodojourney.app.canvas.imageResourceWithSize
 
 object MapResources {
     lateinit var corusant: ImageBitmap
+    lateinit var corusantArch: ImageBitmap
 
     fun load(resources: Resources) {
         corusant = ImageBitmap.imageResourceWithSize(R.drawable.corusant, resources)
+        corusantArch = ImageBitmap.imageResourceWithSize(R.drawable.corusant_arch, resources)
     }
 }

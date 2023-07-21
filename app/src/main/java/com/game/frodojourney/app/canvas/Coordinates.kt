@@ -1,6 +1,7 @@
 package com.game.frodojourney.app.canvas
 
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.unit.Dp
 
 typealias Coordinate = Float
 
@@ -24,4 +25,11 @@ data class Coordinates(
     companion object {
         val Zero = Coordinates(0f, 0f)
     }
+}
+
+data class DpCoordinates(
+    val x: Dp,
+    val y: Dp
+) {
+
 }

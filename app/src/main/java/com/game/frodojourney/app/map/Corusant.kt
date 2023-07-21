@@ -12,5 +12,6 @@ data class Corusant(
     override val mapPosition: Coordinates = Coordinates.Zero,
     override val mapImage: ImageBitmap = MapResources.corusant,
     override val imageResource: Int = R.drawable.corusant,
-    override val imageSize: Size = Size(mapImage.width.toFloat(), mapImage.height.toFloat())
+    override val imageSize: Size = Size(mapImage.width.toFloat(), mapImage.height.toFloat()),
+    override val frontObjects: List<MapObject> = corusantFrontObjects
 ) : GameMap
