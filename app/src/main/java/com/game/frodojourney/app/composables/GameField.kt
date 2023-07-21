@@ -40,10 +40,9 @@ fun GamePlayingField(
             )
         }
         with(viewData) {
-            drawImage(
-                image = mapState.map.mapImage,
-                topLeft = mapState.map.mapPosition.toOffset()
-            )
+            with(mapState.map) {
+                draw(viewData)
+            }
 
             with(character) {
                 draw(characterFrame, viewData)
@@ -51,3 +50,4 @@ fun GamePlayingField(
         }
     }
 }
+

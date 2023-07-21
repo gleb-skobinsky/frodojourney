@@ -2,7 +2,9 @@ package com.game.frodojourney.app.map
 
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import com.game.frodojourney.app.canvas.Coordinates
+import com.game.frodojourney.app.canvas.ViewData
 
 interface GameMap {
     val mapPosition: Coordinates
@@ -11,4 +13,6 @@ interface GameMap {
     val imageResource: Int
     val imageSize: Size
     val frontObjects: List<MapObject>
+
+    fun DrawScope.draw(viewData: ViewData)
 }
