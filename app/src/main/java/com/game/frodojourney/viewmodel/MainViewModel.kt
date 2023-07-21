@@ -117,12 +117,6 @@ data class MainViewModel(
         _character.value = _character.value.copyWeaponAware(characterFrame = frame)
     }
 
-    /*
-    fun setInitialCharacterPosition(position: Coordinates) {
-        _character.value = _character.value.copyWeaponAware(position = position)
-    }
-     */
-
     fun updateCharacterPosX(delta: Dp) {
         with(_viewData.value) {
             val characterPositionAsOffset = _character.value.position.toOffset()
