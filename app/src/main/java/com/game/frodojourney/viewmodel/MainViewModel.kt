@@ -16,6 +16,7 @@ import com.game.frodojourney.app.map.Corusant
 import com.game.frodojourney.app.map.GameMap
 import com.game.frodojourney.character.CharacterTurned
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -51,11 +52,11 @@ data class MainViewModel(
         viewModelScope.launch {
             setFrame(LukeRun.removeWeapon())
             setFight(true)
-            for (i in (1..30)) {
+            for (i in (1..15)) {
                 val prevWeapon = _character.value.weapon
                 _character.value =
-                    _character.value.copyWeaponAware(weapon = prevWeapon.copy(rotation = i * 12f))
-                delay(16L)
+                    _character.value.copyWeaponAware(weapon = prevWeapon.copy(rotation = i * 24f))
+                awaitFrame()
             }
             setFight(false)
             setFrame(LukeRun.reset())
@@ -68,7 +69,7 @@ data class MainViewModel(
                 turnCharacter(_character.value.turned)
                 updateCharacterPosX(_character.value.stepX)
                 updateCharacterPosY(_character.value.stepY)
-                delay(16L)
+                awaitFrame()
             }
         }
         animationJob = viewModelScope.launch {
