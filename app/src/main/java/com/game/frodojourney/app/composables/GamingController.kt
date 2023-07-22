@@ -23,10 +23,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import com.game.frodojourney.app.ControllerArrow
-import com.game.frodojourney.app.ControllerArrowButton
-import com.game.frodojourney.app.characterStep
-import com.game.frodojourney.character.CharacterTurned
+import com.game.frodojourney.app.character.CharacterTurned
 import com.game.frodojourney.viewmodel.MainViewModel
 import kotlin.math.abs
 import kotlin.math.pow

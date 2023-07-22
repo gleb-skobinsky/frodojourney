@@ -1,4 +1,4 @@
-package com.game.frodojourney.character
+package com.game.frodojourney.app.character
 
 enum class CharacterTurned(val mirrorX: Float) {
     LEFT(-1f),

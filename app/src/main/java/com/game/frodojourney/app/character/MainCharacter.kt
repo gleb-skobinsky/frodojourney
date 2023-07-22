@@ -10,7 +10,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.game.frodojourney.app.canvas.DpCoordinates
 import com.game.frodojourney.app.canvas.ViewData
-import com.game.frodojourney.character.CharacterTurned
 
 
 val weaponCorrectionDifference = DpCoordinates(12.dp, 6.dp)
@@ -23,7 +22,7 @@ data class PixelMainCharacter(
     override val isMoving: Boolean = false,
     val stepX: Dp = 0.dp,
     val stepY: Dp = 0.dp,
-    override val characterFrame: ImageBitmap = LukeRun.calm,
+    override val image: ImageBitmap = LukeRun.calm,
     override val weapon: Weapon = Weapon(
         position = position + weaponCorrectionDifference,
         image = Weapons.lightSaber
@@ -37,7 +36,7 @@ data class PixelMainCharacter(
         isMoving: Boolean = this.isMoving,
         stepX: Dp = this.stepX,
         stepY: Dp = this.stepY,
-        characterFrame: ImageBitmap = this.characterFrame,
+        characterFrame: ImageBitmap = this.image,
         weapon: Weapon = this.weapon.copy(position = this.position + weaponCorrectionDifference)
     ): PixelMainCharacter {
         return this.copy(
@@ -47,7 +46,7 @@ data class PixelMainCharacter(
             isMoving = isMoving,
             stepX = stepX,
             stepY = stepY,
-            characterFrame = characterFrame,
+            image = characterFrame,
             weapon = weapon
         )
     }

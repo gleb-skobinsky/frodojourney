@@ -6,24 +6,18 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.Density
 import com.game.frodojourney.app.canvas.DpCoordinates
 import com.game.frodojourney.app.canvas.ViewData
-import com.game.frodojourney.character.CharacterTurned
+import com.game.frodojourney.app.common.Positioned
 
-data class Weapon(
-    val position: DpCoordinates,
-    val image: ImageBitmap,
-    val rotation: Float = 0f
-)
-
-interface GenericCharacter {
-    val position: DpCoordinates
+interface GenericCharacter : Positioned {
+    override val position: DpCoordinates
+    override val image: ImageBitmap
     val turned: CharacterTurned
     val isFighting: Boolean
     val isMoving: Boolean
-    val characterFrame: ImageBitmap
     val weapon: Weapon?
 
     fun characterBaseLine(density: Density) =
-        with(density) { position.y.toPx() + characterFrame.height }
+        with(density) { position.y.toPx() + image.height }
 
     fun DrawScope.draw(animationFrame: ImageBitmap, viewData: ViewData)
 }

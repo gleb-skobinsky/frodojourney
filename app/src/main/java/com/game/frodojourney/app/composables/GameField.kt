@@ -46,7 +46,7 @@ fun GamePlayingField(
         }
 
         with(character) {
-            draw(characterFrame, viewData)
+            draw(image, viewData)
         }
 
         with(mapState.map) {

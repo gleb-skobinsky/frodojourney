@@ -1,4 +1,4 @@
-package com.game.frodojourney.app
+package com.game.frodojourney.app.composables
 
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -28,7 +28,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import com.game.frodojourney.app.character.LukeRun
-import com.game.frodojourney.character.CharacterTurned
+import com.game.frodojourney.app.character.CharacterTurned
 import com.game.frodojourney.viewmodel.MainViewModel
 import kotlinx.coroutines.delay
 
