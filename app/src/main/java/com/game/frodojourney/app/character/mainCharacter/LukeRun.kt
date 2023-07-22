@@ -2,6 +2,7 @@ package com.game.frodojourney.app.character.mainCharacter
 
 import android.content.res.Resources
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.unit.Density
 import com.game.frodojourney.R
 import com.game.frodojourney.app.canvas.imageResourceWithSize
 import com.game.frodojourney.app.character.Animation
@@ -20,7 +21,7 @@ object LukeRun : Animation, Loadable {
     lateinit var frame8: ImageBitmap
     lateinit var current: ImageBitmap
     lateinit var no_light_saber: ImageBitmap
-    override fun load(resources: Resources) {
+    override fun load(resources: Resources, density: Density) {
         frame0 = ImageBitmap.imageResourceWithSize(R.drawable.ls_run_0, resources)
         frame1 = ImageBitmap.imageResourceWithSize(R.drawable.ls_run_1, resources)
         frame2 = ImageBitmap.imageResourceWithSize(R.drawable.ls_run_2, resources)

@@ -5,6 +5,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 import com.game.frodojourney.app.App
 import com.game.frodojourney.app.character.mainCharacter.LukeRun
 import com.game.frodojourney.app.character.WeaponsResources
@@ -19,8 +21,8 @@ class MainActivity : ComponentActivity() {
     private val gameViewModel: MainViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        prepareResources(resources)
         setContent {
+            prepareResources(resources, LocalDensity.current)
             FrodoJourneyTheme {
                 App(gameViewModel)
             }
@@ -28,9 +30,9 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-private fun prepareResources(res: Resources) {
-    LukeRun.load(res)
-    MapResources.load(res)
-    WeaponsResources.load(res)
-    EnemyResources.load(res)
+private fun prepareResources(res: Resources, density: Density) {
+    LukeRun.load(res, density)
+    MapResources.load(res, density)
+    WeaponsResources.load(res, density)
+    EnemyResources.load(res, density)
 }

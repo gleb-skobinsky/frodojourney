@@ -36,6 +36,7 @@ fun App(viewModel: MainViewModel) {
     val character by viewModel.character.collectAsState()
     val mapState by viewModel.mapState.collectAsState()
     val viewData by viewModel.viewData.collectAsState()
+    val squad by viewModel.squad.collectAsState()
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -43,7 +44,8 @@ fun App(viewModel: MainViewModel) {
             viewData = viewData,
             viewModel = viewModel,
             mapState = mapState,
-            character = character
+            character = character,
+            squad = squad
         )
         LightSaberController(viewModel)
         MainGamingController(
