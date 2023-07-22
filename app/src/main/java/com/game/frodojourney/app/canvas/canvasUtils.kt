@@ -25,8 +25,25 @@ fun ImageBitmap.Companion.imageResourceWithSize(
     height: Int? = null
 ): ImageBitmap {
     val bitmap = BitmapFactory.decodeResource(res, id)
+    var actualWidth = width
+    var actualHeight = height
+    val ratio = bitmap.width.toFloat() / bitmap.height.toFloat()
+    when {
+        width == null && height == null -> {
+            actualWidth = bitmap.width
+            actualHeight = bitmap.height
+        }
+
+        width == null && height != null -> {
+            actualWidth = (actualHeight!! * ratio).toInt()
+        }
+
+        width != null && height == null -> {
+            actualHeight = (actualWidth!! / ratio).toInt()
+        }
+    }
     val scaledBitmap =
-        Bitmap.createScaledBitmap(bitmap, width ?: bitmap.width, height ?: bitmap.height, true)
+        Bitmap.createScaledBitmap(bitmap, actualWidth!!, actualHeight!!, true)
     return scaledBitmap.asImageBitmap()
 }
 

@@ -11,11 +11,10 @@ import com.game.frodojourney.app.canvas.Coordinates
 import com.game.frodojourney.app.canvas.DpCoordinates
 import com.game.frodojourney.app.canvas.ViewData
 import com.game.frodojourney.app.character.CharacterTurned
-import com.game.frodojourney.app.character.enemies.EnemyResources
+import com.game.frodojourney.app.character.enemies.Squad
+import com.game.frodojourney.app.character.enemies.defaultSquad
 import com.game.frodojourney.app.character.mainCharacter.LukeRun
 import com.game.frodojourney.app.character.mainCharacter.PixelMainCharacter
-import com.game.frodojourney.app.character.enemies.Trooper
-import com.game.frodojourney.app.character.enemies.Squad
 import com.game.frodojourney.app.map.Corusant
 import com.game.frodojourney.app.map.GameMap
 import kotlinx.coroutines.Job
@@ -43,9 +42,7 @@ data class MainViewModel(
         PixelMainCharacter()
     ),
     val character: StateFlow<PixelMainCharacter> = _character.asStateFlow(),
-    private val _squad: MutableStateFlow<Squad> = MutableStateFlow(
-        Squad(Trooper(DpCoordinates(472.dp, 420.dp), EnemyResources.trooperImage))
-    ),
+    private val _squad: MutableStateFlow<Squad> = MutableStateFlow(defaultSquad),
     val squad: StateFlow<Squad> = _squad.asStateFlow(),
     private var movementJob: Job? = null,
     private var animationJob: Job? = null,

@@ -17,8 +17,7 @@ object EnemyResources : Loadable {
                 ImageBitmap.imageResourceWithSize(
                     R.drawable.clone_knee,
                     resources,
-                    height = 40.dp.toPx().toInt(),
-                    width = 38.dp.toPx().toInt()
+                    height = 46.dp.toPx().toInt()
                 )
             }
     }
