@@ -27,7 +27,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
-import com.game.frodojourney.app.character.LukeRun
+import com.game.frodojourney.app.character.mainCharacter.LukeRun
 import com.game.frodojourney.app.character.CharacterTurned
 import com.game.frodojourney.viewmodel.MainViewModel
 import kotlinx.coroutines.delay

@@ -1,31 +1,13 @@
-package com.game.frodojourney.app.character
+package com.game.frodojourney.app.character.mainCharacter
 
 import android.content.res.Resources
 import androidx.compose.ui.graphics.ImageBitmap
 import com.game.frodojourney.R
 import com.game.frodojourney.app.canvas.imageResourceWithSize
+import com.game.frodojourney.app.character.Animation
+import com.game.frodojourney.app.res.Loadable
 
-interface LoadableResource {
-
-    fun load(resources: Resources)
-}
-
-interface Animation {
-
-    fun next(): ImageBitmap
-
-    fun reset(): ImageBitmap
-}
-
-object Weapons : LoadableResource {
-    lateinit var lightSaber: ImageBitmap
-
-    override fun load(resources: Resources) {
-        lightSaber = ImageBitmap.imageResourceWithSize(R.drawable.lightsaber_only, resources)
-    }
-}
-
-object LukeRun : Animation, LoadableResource {
+object LukeRun : Animation, Loadable {
     lateinit var calm: ImageBitmap
     lateinit var frame0: ImageBitmap
     lateinit var frame1: ImageBitmap

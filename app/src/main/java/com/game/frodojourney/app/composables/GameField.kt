@@ -9,7 +9,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.Density
 import com.game.frodojourney.app.canvas.ViewData
-import com.game.frodojourney.app.character.PixelMainCharacter
+import com.game.frodojourney.app.character.mainCharacter.PixelMainCharacter
 import com.game.frodojourney.viewmodel.MainViewModel
 import com.game.frodojourney.viewmodel.MapState
 

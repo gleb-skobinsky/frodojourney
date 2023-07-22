@@ -5,7 +5,7 @@ import androidx.compose.runtime.Stable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.unit.Density
-import com.game.frodojourney.app.character.GenericCharacter
+import com.game.frodojourney.app.character.mainCharacter.GenericCharacter
 import com.game.frodojourney.app.map.MapObject
 
 @Stable

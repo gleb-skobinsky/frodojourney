@@ -1,15 +1,13 @@
-package com.game.frodojourney.app.character
+package com.game.frodojourney.app.character.mainCharacter
 
 import androidx.compose.runtime.Stable
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.rotate
-import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.game.frodojourney.app.canvas.DpCoordinates
-import com.game.frodojourney.app.canvas.ViewData
+import com.game.frodojourney.app.character.CharacterTurned
+import com.game.frodojourney.app.character.Weapon
+import com.game.frodojourney.app.character.WeaponsResources
 
 
 val weaponCorrectionDifference = DpCoordinates(12.dp, 6.dp)
@@ -25,7 +23,7 @@ data class PixelMainCharacter(
     override val image: ImageBitmap = LukeRun.calm,
     override val weapon: Weapon = Weapon(
         position = position + weaponCorrectionDifference,
-        image = Weapons.lightSaber
+        image = WeaponsResources.lightSaber
     )
 ) : GenericCharacter {
 
@@ -48,39 +46,6 @@ data class PixelMainCharacter(
             stepY = stepY,
             image = characterFrame,
             weapon = weapon
-        )
-    }
-
-    override fun DrawScope.draw(animationFrame: ImageBitmap, viewData: ViewData) {
-        with(viewData) {
-            val offset = position.toOffset()
-            val center = offset.x + (animationFrame.width / 2f)
-            scale(scaleX = turned.mirrorX, scaleY = 1f, pivot = Offset(center, offset.y)) {
-                drawImage(
-                    image = animationFrame,
-                    topLeft = offset
-                )
-
-                if (isFighting) {
-                    rotate(
-                        weapon.rotation,
-                        pivot = calculateWeaponOffset()
-                    ) {
-                        drawImage(
-                            image = weapon.image,
-                            topLeft = weapon.position.toOffset()
-                        )
-                    }
-                }
-            }
-        }
-    }
-
-    private fun ViewData.calculateWeaponOffset(): Offset {
-        val weaponOffset = weapon.position.toOffset()
-        return weaponOffset.copy(
-            y = weaponOffset.y + weapon.image.height - 20f,
-            x = weaponOffset.x + 10f
         )
     }
 }
