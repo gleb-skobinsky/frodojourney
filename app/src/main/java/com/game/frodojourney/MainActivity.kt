@@ -5,24 +5,24 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Density
 import com.game.frodojourney.app.App
-import com.game.frodojourney.app.character.mainCharacter.LukeRun
 import com.game.frodojourney.app.character.WeaponsResources
-import com.game.frodojourney.app.character.enemies.EnemyResources
+import com.game.frodojourney.app.character.enemies.TrooperShootingToSide
+import com.game.frodojourney.app.character.enemies.TrooperShootingToTop
+import com.game.frodojourney.app.character.enemies.TrooperStanding
+import com.game.frodojourney.app.character.mainCharacter.Luke
+import com.game.frodojourney.app.character.mainCharacter.LukeRun
 import com.game.frodojourney.app.map.MapResources
 import com.game.frodojourney.ui.theme.FrodoJourneyTheme
 import com.game.frodojourney.viewmodel.MainViewModel
 
 
 class MainActivity : ComponentActivity() {
-
     private val gameViewModel: MainViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        prepareResources(resources)
         setContent {
-            prepareResources(resources, LocalDensity.current)
             FrodoJourneyTheme {
                 App(gameViewModel)
             }
@@ -30,9 +30,12 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-private fun prepareResources(res: Resources, density: Density) {
-    LukeRun.load(res, density)
-    MapResources.load(res, density)
-    WeaponsResources.load(res, density)
-    EnemyResources.load(res, density)
+private fun prepareResources(res: Resources) {
+    LukeRun.load(res)
+    Luke.load(res)
+    MapResources.load(res)
+    WeaponsResources.load(res)
+    TrooperStanding.load(res)
+    TrooperShootingToSide.load(res)
+    TrooperShootingToTop.load(res)
 }

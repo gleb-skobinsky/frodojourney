@@ -20,7 +20,7 @@ data class PixelMainCharacter(
     override val isMoving: Boolean = false,
     val stepX: Dp = 0.dp,
     val stepY: Dp = 0.dp,
-    override val image: ImageBitmap = LukeRun.calm,
+    override val image: ImageBitmap = LukeRun.reset(),
     override val weapon: Weapon = Weapon(
         position = position + weaponCorrectionDifference,
         image = WeaponsResources.lightSaber

@@ -13,6 +13,7 @@ import com.game.frodojourney.app.canvas.ViewData
 import com.game.frodojourney.app.character.CharacterTurned
 import com.game.frodojourney.app.character.enemies.Squad
 import com.game.frodojourney.app.character.enemies.defaultSquad
+import com.game.frodojourney.app.character.mainCharacter.Luke
 import com.game.frodojourney.app.character.mainCharacter.LukeRun
 import com.game.frodojourney.app.character.mainCharacter.PixelMainCharacter
 import com.game.frodojourney.app.map.Corusant
@@ -54,7 +55,7 @@ data class MainViewModel(
 
     fun fightWithLightSaber() {
         viewModelScope.launch {
-            setFrame(LukeRun.removeWeapon())
+            setFrame(Luke.removeWeapon())
             setFight(true)
             for (i in (1..15)) {
                 val prevWeapon = _character.value.weapon
