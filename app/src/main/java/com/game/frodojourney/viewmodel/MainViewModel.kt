@@ -274,10 +274,17 @@ private fun calculateTurnAndAim(value: Float): Pair<CharacterTurned, TrooperAim>
         else -> CharacterTurned.LEFT
     }
     val aim = when (value) {
-        in 45f..135f -> TrooperAim.DOWN
-        in 135f..225f -> TrooperAim.SIDE
-        in 225f..315f -> TrooperAim.UP
+        in 0f..22.5f -> TrooperAim.SIDE
+        in 22.5f..67.5f -> TrooperAim.DOWNSIDE
+        in 67.5f..112.5f -> TrooperAim.DOWN
+        in 112.5f..157.5f -> TrooperAim.DOWNSIDE
+        in 157.5f..202.5f -> TrooperAim.SIDE
+        in 202.5f..247.5f -> TrooperAim.UPSIDE
+        in 247.5f..292.5f -> TrooperAim.UP
+        in 292.5f..337.5f -> TrooperAim.UPSIDE
+        in 337.5f..360f -> TrooperAim.SIDE
         else -> TrooperAim.SIDE
     }
+    println("Aim is: $aim")
     return turn to aim
 }

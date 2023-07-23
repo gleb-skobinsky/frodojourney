@@ -8,8 +8,10 @@ import androidx.activity.viewModels
 import com.game.frodojourney.app.App
 import com.game.frodojourney.app.character.WeaponsResources
 import com.game.frodojourney.app.character.enemies.TrooperShootingDown
-import com.game.frodojourney.app.character.enemies.TrooperShootingToSide
-import com.game.frodojourney.app.character.enemies.TrooperShootingToTop
+import com.game.frodojourney.app.character.enemies.TrooperShootingDownSide
+import com.game.frodojourney.app.character.enemies.TrooperShootingSide
+import com.game.frodojourney.app.character.enemies.TrooperShootingUp
+import com.game.frodojourney.app.character.enemies.TrooperShootingUpSide
 import com.game.frodojourney.app.character.enemies.TrooperStanding
 import com.game.frodojourney.app.character.mainCharacter.Luke
 import com.game.frodojourney.app.character.mainCharacter.LukeRun
@@ -37,7 +39,9 @@ private fun prepareResources(res: Resources) {
     MapResources.load(res)
     WeaponsResources.load(res)
     TrooperStanding.load(res)
+    TrooperShootingUp.load(res)
+    TrooperShootingUpSide.load(res)
+    TrooperShootingSide.load(res)
+    TrooperShootingDownSide.load(res)
     TrooperShootingDown.load(res)
-    TrooperShootingToSide.load(res)
-    TrooperShootingToTop.load(res)
 }

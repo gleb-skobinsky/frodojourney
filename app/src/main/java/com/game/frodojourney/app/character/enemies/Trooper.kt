@@ -32,11 +32,16 @@ data class Trooper(
 
 enum class TrooperAim {
     UP,
-    DOWN,
-    SIDE;
+    UPSIDE,
+    SIDE,
+    DOWNSIDE,
+    DOWN;
+
     fun toImages(): List<ImageBitmap> = when (this) {
-        UP -> TrooperShootingToTop.images
-        SIDE -> TrooperShootingToSide.images
+        UP -> TrooperShootingUp.images
+        UPSIDE -> TrooperShootingUpSide.images
+        SIDE -> TrooperShootingSide.images
+        DOWNSIDE -> TrooperShootingDownSide.images
         DOWN -> TrooperShootingDown.images
     }
 }
