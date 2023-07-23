@@ -1,6 +1,5 @@
 package com.game.frodojourney.viewmodel
 
-import androidx.compose.runtime.Stable
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -11,9 +10,7 @@ import com.game.frodojourney.app.canvas.Coordinates
 import com.game.frodojourney.app.canvas.DpCoordinates
 import com.game.frodojourney.app.canvas.ViewData
 import com.game.frodojourney.app.character.CharacterTurned
-import com.game.frodojourney.app.character.enemies.Squad
-import com.game.frodojourney.app.character.enemies.TrooperShootingDown
-import com.game.frodojourney.app.character.enemies.defaultSquad
+import com.game.frodojourney.app.character.enemies.FixedSquad
 import com.game.frodojourney.app.character.mainCharacter.Luke
 import com.game.frodojourney.app.character.mainCharacter.LukeRun
 import com.game.frodojourney.app.character.mainCharacter.PixelMainCharacter
@@ -34,7 +31,7 @@ data class MapState(
 const val borderToScreen = 30f
 const val borderToScreenTwoTimes = 60f
 
-@Stable
+// @Stable
 data class MainViewModel(
     private val _mapState: MutableStateFlow<MapState> = MutableStateFlow(MapState()),
     val mapState: StateFlow<MapState> = _mapState.asStateFlow(),
@@ -44,29 +41,46 @@ data class MainViewModel(
         PixelMainCharacter()
     ),
     val character: StateFlow<PixelMainCharacter> = _character.asStateFlow(),
-    private val _squad: MutableStateFlow<Squad> = MutableStateFlow(defaultSquad),
-    val squad: StateFlow<Squad> = _squad.asStateFlow(),
+    private val _squad: MutableStateFlow<FixedSquad> = MutableStateFlow(FixedSquad()),
+    val squad: StateFlow<FixedSquad> = _squad.asStateFlow(),
     private var movementJob: Job? = null,
-    private var animationJob: Job? = null,
-    private var enemiesJob: Job? = null
+    private var animationJob: Job? = null
 ) : ViewModel() {
 
     private fun triggerEnemies() {
-        if (enemiesJob == null) {
-            enemiesJob = viewModelScope.launch {
-                while(_squad.value.troopers[0].isAlarmed) {
-                    val troopers = _squad.value.troopers
-                    troopers[0] = troopers[0].copy(image = TrooperShootingDown.next())
-                    awaitFrame()
+        if (trooper1JobNotActive()) {
+            _squad.value.trooper1.animationJob = viewModelScope.launch {
+                val images = _squad.value.trooper1.aiming.toImages()
+                for (frame in images) {
+                    val newTrooper = _squad.value.trooper1.copy(image = frame)
+                    _squad.value = _squad.value.copy(trooper1 = newTrooper)
+                    delay(200L)
                 }
             }
         }
+        /*
+        for (i in 0 until _squad.value.size) {
+            val trooper = _squad.value.troopers[i]
+            val squad = _squad.value
+            if (trooper.animationJob?.isActive != true) {
+                trooper.animationJob = viewModelScope.launch {
+                    for (frame in TrooperShootingDown.images) {
+                        val newTrooper = trooper.copy(image = frame)
+                        squad.troopers[i] = newTrooper
+                        _squad.value = squad
+                        delay(200L)
+                    }
+                }
+            }
+        }
+         */
     }
+
+    private fun trooper1JobNotActive() = _squad.value.trooper1.animationJob?.isActive != true
 
     private fun setFight(fighting: Boolean) {
         _character.value = _character.value.copyWeaponAware(isFighting = fighting)
     }
-
 
 
     fun fightWithLightSaber() {
@@ -110,9 +124,6 @@ data class MainViewModel(
                 stepX = stepX,
                 stepY = stepY
             )
-        val squad = _squad.value.troopers
-        squad[0] = squad[0].copy(isAlarmed = true)
-        _squad.value = Squad(squad)
         triggerEnemies()
         if (movementJob == null && animationJob == null) {
             launchMovementCoroutine()

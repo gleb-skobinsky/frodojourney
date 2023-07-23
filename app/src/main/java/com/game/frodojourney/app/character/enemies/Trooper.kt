@@ -7,15 +7,18 @@ import com.game.frodojourney.app.character.CharacterTurned
 import com.game.frodojourney.app.character.Weapon
 import com.game.frodojourney.app.character.WeaponsResources
 import com.game.frodojourney.app.character.mainCharacter.GenericCharacter
+import kotlinx.coroutines.Job
 
 data class Trooper(
     override val position: DpCoordinates,
     override val image: ImageBitmap,
+    val imageIndex: Int = 0,
     override val turned: CharacterTurned = CharacterTurned.RIGHT,
+    val aiming: TrooperAim = TrooperAim.DOWN,
     override val isMoving: Boolean = false,
-    val isAlarmed: Boolean = false,
     override val weapon: Weapon = Weapon(DpCoordinates.Zero, WeaponsResources.largeRifle),
-    override val isFighting: Boolean = false
+    override val isFighting: Boolean = false,
+    var animationJob: Job? = null
 ) : GenericCharacter {
 
     companion object {
@@ -24,5 +27,16 @@ data class Trooper(
             image = TrooperStanding.reset(),
             turned = CharacterTurned.RIGHT
         )
+    }
+}
+
+enum class TrooperAim {
+    UP,
+    DOWN,
+    SIDE;
+    fun toImages(): List<ImageBitmap> = when (this) {
+        UP -> TrooperShootingToTop.images
+        SIDE -> TrooperShootingToSide.images
+        DOWN -> TrooperShootingDown.images
     }
 }
