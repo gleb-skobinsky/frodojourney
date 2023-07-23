@@ -10,12 +10,36 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.DpOffset
+import kotlin.math.atan2
+import kotlin.math.sqrt
 
 fun DpOffset.toOffset(density: Density) = with(density) { Offset(x.toPx(), y.toPx()) }
 
 fun Offset.toDpOffset(density: Density) = with(density) { DpOffset(x.toDp(), y.toDp()) }
 
 fun Size.toOffset() = Offset(width, height)
+
+fun calculateAngle(coordinate1: DpCoordinates, coordinate2: DpCoordinates): Float {
+    // Calculate the angle in radians
+    val angleRadians = atan2(
+        (coordinate2.y.value - coordinate1.y.value).toDouble(),
+        (coordinate2.x.value - coordinate1.x.value).toDouble()
+    )
+
+    // Convert the angle from radians to degrees
+    val angleDegrees = Math.toDegrees(angleRadians).toFloat()
+
+    // Return the adjusted angle
+    return (angleDegrees + 360) % 360
+}
+
+fun distance(pos1: DpCoordinates, pos2: DpCoordinates): Float {
+    val x1 = pos1.x.value
+    val y1 = pos1.y.value
+    val x2 = pos2.x.value
+    val y2 = pos2.y.value
+    return sqrt((y2 - y1) * (y2 - y1) + (x2 - x1) * (x2 - x1))
+}
 
 
 fun ImageBitmap.Companion.imageResourceWithSize(

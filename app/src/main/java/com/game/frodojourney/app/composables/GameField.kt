@@ -29,7 +29,6 @@ fun GamePlayingField(
         }
     }
     Canvas(modifier = Modifier.fillMaxSize()) {
-        println("Last recomposition")
         if (viewData.size == Size.Zero) {
             viewModel.setViewData(
                 ViewData(
@@ -52,10 +51,7 @@ fun GamePlayingField(
             draw(viewData)
         }
 
-        var i = 0
         for (trooper in squad) {
-            i++
-            println("Rendering trooper ${i}")
             with(trooper) {
                 draw(viewData)
             }

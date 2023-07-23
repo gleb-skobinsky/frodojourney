@@ -1,5 +1,6 @@
 package com.game.frodojourney.viewmodel
 
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -9,8 +10,11 @@ import com.game.frodojourney.app.canvas.Coordinate
 import com.game.frodojourney.app.canvas.Coordinates
 import com.game.frodojourney.app.canvas.DpCoordinates
 import com.game.frodojourney.app.canvas.ViewData
+import com.game.frodojourney.app.canvas.calculateAngle
+import com.game.frodojourney.app.canvas.distance
 import com.game.frodojourney.app.character.CharacterTurned
 import com.game.frodojourney.app.character.enemies.FixedSquad
+import com.game.frodojourney.app.character.enemies.TrooperAim
 import com.game.frodojourney.app.character.mainCharacter.Luke
 import com.game.frodojourney.app.character.mainCharacter.LukeRun
 import com.game.frodojourney.app.character.mainCharacter.PixelMainCharacter
@@ -31,7 +35,7 @@ data class MapState(
 const val borderToScreen = 30f
 const val borderToScreenTwoTimes = 60f
 
-// @Stable
+@Stable
 data class MainViewModel(
     private val _mapState: MutableStateFlow<MapState> = MutableStateFlow(MapState()),
     val mapState: StateFlow<MapState> = _mapState.asStateFlow(),
@@ -47,36 +51,46 @@ data class MainViewModel(
     private var animationJob: Job? = null
 ) : ViewModel() {
 
-    private fun triggerEnemies() {
-        if (trooper1JobNotActive()) {
+    private fun trooper1FollowTarget() {
+        val angle = calculateAngle(_squad.value.trooper1.position, _character.value.position)
+        val (turn, aim) = calculateTurnAndAim(angle)
+        println("Turn: $turn, aim: $aim")
+    }
+
+    private fun calculateTurnAndAim(value: Float): Pair<CharacterTurned, TrooperAim> {
+        val turn = when (value) {
+            in 90f..270f -> CharacterTurned.RIGHT
+            else -> CharacterTurned.LEFT
+        }
+        val aim = when (value) {
+            in 45f..135f -> TrooperAim.DOWN
+            in 135f..225f -> TrooperAim.SIDE
+            in 225f..315f -> TrooperAim.UP
+            else -> TrooperAim.SIDE
+        }
+        return turn to aim
+    }
+
+    private fun checkTrooper1Distance() {
+        val pos1 = _squad.value.trooper1.position
+        val pos2 = _character.value.position
+        if (distance(pos1, pos2) < 230f) {
+            triggerTrooper1()
+        }
+    }
+
+    private fun triggerTrooper1() {
+        if (_squad.value.trooper1.animationJob?.isActive != true) {
             _squad.value.trooper1.animationJob = viewModelScope.launch {
                 val images = _squad.value.trooper1.aiming.toImages()
                 for (frame in images) {
                     val newTrooper = _squad.value.trooper1.copy(image = frame)
                     _squad.value = _squad.value.copy(trooper1 = newTrooper)
-                    delay(200L)
+                    delay(100L)
                 }
             }
         }
-        /*
-        for (i in 0 until _squad.value.size) {
-            val trooper = _squad.value.troopers[i]
-            val squad = _squad.value
-            if (trooper.animationJob?.isActive != true) {
-                trooper.animationJob = viewModelScope.launch {
-                    for (frame in TrooperShootingDown.images) {
-                        val newTrooper = trooper.copy(image = frame)
-                        squad.troopers[i] = newTrooper
-                        _squad.value = squad
-                        delay(200L)
-                    }
-                }
-            }
-        }
-         */
     }
-
-    private fun trooper1JobNotActive() = _squad.value.trooper1.animationJob?.isActive != true
 
     private fun setFight(fighting: Boolean) {
         _character.value = _character.value.copyWeaponAware(isFighting = fighting)
@@ -124,11 +138,11 @@ data class MainViewModel(
                 stepX = stepX,
                 stepY = stepY
             )
-        triggerEnemies()
         if (movementJob == null && animationJob == null) {
             launchMovementCoroutine()
         }
-
+        trooper1FollowTarget()
+        checkTrooper1Distance()
     }
 
     fun stopMovement() {
