@@ -29,6 +29,7 @@ object TrooperShootingDown : Animation() {
 }
 
 object TrooperShootingToSide : Animation() {
+
     override val ids: List<Int> = listOf(
         R.drawable.trooper5,
         R.drawable.trooper6,

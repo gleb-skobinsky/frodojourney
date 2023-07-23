@@ -13,9 +13,11 @@ data class Trooper(
     override val image: ImageBitmap,
     override val turned: CharacterTurned = CharacterTurned.RIGHT,
     override val isMoving: Boolean = false,
+    val isAlarmed: Boolean = false,
     override val weapon: Weapon = Weapon(DpCoordinates.Zero, WeaponsResources.largeRifle),
     override val isFighting: Boolean = false
 ) : GenericCharacter {
+
     companion object {
         fun createDefault(x: Int, y: Int) = Trooper(
             position = DpCoordinates(x = x.dp, y = y.dp),

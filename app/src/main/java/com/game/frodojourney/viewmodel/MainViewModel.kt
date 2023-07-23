@@ -12,6 +12,7 @@ import com.game.frodojourney.app.canvas.DpCoordinates
 import com.game.frodojourney.app.canvas.ViewData
 import com.game.frodojourney.app.character.CharacterTurned
 import com.game.frodojourney.app.character.enemies.Squad
+import com.game.frodojourney.app.character.enemies.TrooperShootingDown
 import com.game.frodojourney.app.character.enemies.defaultSquad
 import com.game.frodojourney.app.character.mainCharacter.Luke
 import com.game.frodojourney.app.character.mainCharacter.LukeRun
@@ -47,11 +48,26 @@ data class MainViewModel(
     val squad: StateFlow<Squad> = _squad.asStateFlow(),
     private var movementJob: Job? = null,
     private var animationJob: Job? = null,
+    private var enemiesJob: Job? = null
 ) : ViewModel() {
+
+    private fun triggerEnemies() {
+        if (enemiesJob == null) {
+            enemiesJob = viewModelScope.launch {
+                while(_squad.value.troopers[0].isAlarmed) {
+                    val troopers = _squad.value.troopers
+                    troopers[0] = troopers[0].copy(image = TrooperShootingDown.next())
+                    awaitFrame()
+                }
+            }
+        }
+    }
 
     private fun setFight(fighting: Boolean) {
         _character.value = _character.value.copyWeaponAware(isFighting = fighting)
     }
+
+
 
     fun fightWithLightSaber() {
         viewModelScope.launch {
@@ -94,6 +110,10 @@ data class MainViewModel(
                 stepX = stepX,
                 stepY = stepY
             )
+        val squad = _squad.value.troopers
+        squad[0] = squad[0].copy(isAlarmed = true)
+        _squad.value = Squad(squad)
+        triggerEnemies()
         if (movementJob == null && animationJob == null) {
             launchMovementCoroutine()
         }
@@ -136,8 +156,7 @@ data class MainViewModel(
         return newPos in _mapState.value.map.allowedArea
     }
 
-    fun updateCharacterPosX(delta: Dp) {
-        println("Character position: ${_character.value.position}")
+    private fun updateCharacterPosX(delta: Dp) {
         with(_viewData.value) {
             val characterPositionAsOffset = _character.value.position.toOffset()
             with(_viewData.value.density) {
@@ -181,7 +200,7 @@ data class MainViewModel(
         }
     }
 
-    fun updateCharacterPosY(delta: Dp) {
+    private fun updateCharacterPosY(delta: Dp) {
         with(_viewData.value) {
             val characterPositionAsOffset = _character.value.position.toOffset()
             with(_viewData.value.density) {
@@ -226,7 +245,7 @@ data class MainViewModel(
             _character.value.copyWeaponAware(position = prevPos.copy(x = prevPos.x + delta))
     }
 
-    fun turnCharacter(turn: CharacterTurned) {
+    private fun turnCharacter(turn: CharacterTurned) {
         _character.value = _character.value.copyWeaponAware(turned = turn)
     }
 }
