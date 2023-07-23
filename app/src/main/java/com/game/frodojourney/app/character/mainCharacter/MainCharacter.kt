@@ -34,7 +34,7 @@ data class PixelMainCharacter(
         isMoving: Boolean = this.isMoving,
         stepX: Dp = this.stepX,
         stepY: Dp = this.stepY,
-        characterFrame: ImageBitmap = this.image,
+        image: ImageBitmap = this.image,
         weapon: Weapon = this.weapon.copy(position = this.position + weaponCorrectionDifference)
     ): PixelMainCharacter {
         return this.copy(
@@ -44,7 +44,7 @@ data class PixelMainCharacter(
             isMoving = isMoving,
             stepX = stepX,
             stepY = stepY,
-            image = characterFrame,
+            image = image,
             weapon = weapon
         )
     }

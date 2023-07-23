@@ -117,8 +117,8 @@ data class MainViewModel(
     }
 
 
-    fun setFrame(frame: ImageBitmap) {
-        _character.value = _character.value.copyWeaponAware(characterFrame = frame)
+    private fun setFrame(frame: ImageBitmap) {
+        _character.value = _character.value.copyWeaponAware(image = frame)
     }
 
     private fun isInAllowedAreaX(delta: Dp): Boolean {

@@ -32,13 +32,13 @@ interface GenericCharacter : Positioned {
         )
     }
 
-    fun DrawScope.draw(animationFrame: ImageBitmap, viewData: ViewData) {
+    fun DrawScope.draw(viewData: ViewData) {
         with(viewData) {
             val offset = position.toOffset()
-            val center = offset.x + (animationFrame.width / 2f)
+            val center = offset.x + (image.width / 2f)
             scale(scaleX = turned.mirrorX, scaleY = 1f, pivot = Offset(center, offset.y)) {
                 drawImage(
-                    image = animationFrame,
+                    image = image,
                     topLeft = offset
                 )
 

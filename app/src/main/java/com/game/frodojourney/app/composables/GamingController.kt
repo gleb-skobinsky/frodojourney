@@ -53,11 +53,7 @@ fun BoxScope.MainGamingController(
     ) {
         enumValues<ControllerArrow>().forEach { arrow ->
             ControllerArrowButton(
-                arrow = arrow,
-                viewModel = viewModel,
-                onAnimate = {
-                    viewModel.setFrame(it)
-                }
+                arrow = arrow
             )
         }
         Joystick(viewModel)

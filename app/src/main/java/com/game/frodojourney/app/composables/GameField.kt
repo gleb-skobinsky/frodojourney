@@ -48,12 +48,12 @@ fun GamePlayingField(
         }
 
         with(character) {
-            draw(image, viewData)
+            draw(viewData)
         }
 
         for (trooper in squad) {
             with(trooper) {
-                draw(image, viewData)
+                draw(viewData)
             }
         }
 
