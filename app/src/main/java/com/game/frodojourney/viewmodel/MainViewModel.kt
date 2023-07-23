@@ -13,11 +13,11 @@ import com.game.frodojourney.app.canvas.ViewData
 import com.game.frodojourney.app.canvas.calculateAngle
 import com.game.frodojourney.app.canvas.distance
 import com.game.frodojourney.app.character.CharacterTurned
-import com.game.frodojourney.app.character.enemies.FixedSquad
+import com.game.frodojourney.app.character.enemies.FixedSizeSquad
 import com.game.frodojourney.app.character.enemies.TrooperAim
 import com.game.frodojourney.app.character.mainCharacter.Luke
 import com.game.frodojourney.app.character.mainCharacter.LukeRun
-import com.game.frodojourney.app.character.mainCharacter.PixelMainCharacter
+import com.game.frodojourney.app.character.mainCharacter.MainHero
 import com.game.frodojourney.app.map.Corusant
 import com.game.frodojourney.app.map.GameMap
 import kotlinx.coroutines.Job
@@ -41,12 +41,10 @@ data class MainViewModel(
     val mapState: StateFlow<MapState> = _mapState.asStateFlow(),
     private val _viewData: MutableStateFlow<ViewData> = MutableStateFlow(ViewData()),
     val viewData: StateFlow<ViewData> = _viewData.asStateFlow(),
-    private val _character: MutableStateFlow<PixelMainCharacter> = MutableStateFlow(
-        PixelMainCharacter()
-    ),
-    val character: StateFlow<PixelMainCharacter> = _character.asStateFlow(),
-    private val _squad: MutableStateFlow<FixedSquad> = MutableStateFlow(FixedSquad()),
-    val squad: StateFlow<FixedSquad> = _squad.asStateFlow(),
+    private val _character: MutableStateFlow<MainHero> = MutableStateFlow(MainHero()),
+    val character: StateFlow<MainHero> = _character.asStateFlow(),
+    private val _squad: MutableStateFlow<FixedSizeSquad> = MutableStateFlow(FixedSizeSquad()),
+    val squad: StateFlow<FixedSizeSquad> = _squad.asStateFlow(),
     private var movementJob: Job? = null,
     private var animationJob: Job? = null
 ) : ViewModel() {
@@ -54,28 +52,23 @@ data class MainViewModel(
     private fun trooper1FollowTarget() {
         val angle = calculateAngle(_squad.value.trooper1.position, _character.value.position)
         val (turn, aim) = calculateTurnAndAim(angle)
-        println("Turn: $turn, aim: $aim")
+        val trooper = _squad.value.trooper1.copy(turned = turn, aiming = aim)
+        _squad.value = _squad.value.copy(trooper1 = trooper)
     }
 
-    private fun calculateTurnAndAim(value: Float): Pair<CharacterTurned, TrooperAim> {
-        val turn = when (value) {
-            in 90f..270f -> CharacterTurned.RIGHT
-            else -> CharacterTurned.LEFT
-        }
-        val aim = when (value) {
-            in 45f..135f -> TrooperAim.DOWN
-            in 135f..225f -> TrooperAim.SIDE
-            in 225f..315f -> TrooperAim.UP
-            else -> TrooperAim.SIDE
-        }
-        return turn to aim
+    private fun setTrooper1Fighting(fighting: Boolean) {
+        val trooper1 = _squad.value.trooper1.copy(isFighting = fighting)
+        _squad.value = _squad.value.copy(trooper1 = trooper1)
     }
 
     private fun checkTrooper1Distance() {
         val pos1 = _squad.value.trooper1.position
         val pos2 = _character.value.position
         if (distance(pos1, pos2) < 230f) {
+            setTrooper1Fighting(true)
             triggerTrooper1()
+        } else {
+            setTrooper1Fighting(false)
         }
     }
 
@@ -275,3 +268,16 @@ data class MainViewModel(
     }
 }
 
+private fun calculateTurnAndAim(value: Float): Pair<CharacterTurned, TrooperAim> {
+    val turn = when (value) {
+        in 90f..270f -> CharacterTurned.RIGHT
+        else -> CharacterTurned.LEFT
+    }
+    val aim = when (value) {
+        in 45f..135f -> TrooperAim.DOWN
+        in 135f..225f -> TrooperAim.SIDE
+        in 225f..315f -> TrooperAim.UP
+        else -> TrooperAim.SIDE
+    }
+    return turn to aim
+}

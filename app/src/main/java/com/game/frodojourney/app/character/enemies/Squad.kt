@@ -14,7 +14,7 @@ data class Squad(val troopers: MutableList<Trooper>) {
     val size = troopers.size
 }
 
-data class FixedSquad(
+data class FixedSizeSquad(
     val trooper1: Trooper = Trooper.createDefault(
         472, 420
     ),

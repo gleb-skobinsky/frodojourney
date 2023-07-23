@@ -13,7 +13,7 @@ import com.game.frodojourney.app.character.WeaponsResources
 val weaponCorrectionDifference = DpCoordinates(12.dp, 6.dp)
 
 @Stable
-data class PixelMainCharacter(
+data class MainHero(
     override val position: DpCoordinates = DpCoordinates(180.dp, 680.dp),
     override val turned: CharacterTurned = CharacterTurned.RIGHT,
     override val isFighting: Boolean = false,
@@ -36,7 +36,7 @@ data class PixelMainCharacter(
         stepY: Dp = this.stepY,
         image: ImageBitmap = this.image,
         weapon: Weapon = this.weapon.copy(position = this.position + weaponCorrectionDifference)
-    ): PixelMainCharacter {
+    ): MainHero {
         return this.copy(
             position = position,
             turned = turned,
