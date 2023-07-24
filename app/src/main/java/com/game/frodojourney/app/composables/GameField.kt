@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -97,6 +98,7 @@ fun GamePlayingField(
         key2 = squad.trooper1.aiming,
         key3 = character.position
     ) {
+        bullets.clear()
         if (squad.trooper1.isAlarmed) {
             val images = squad.trooper1.aiming.toImages()
             images.forEachIndexed { i, frame ->
@@ -106,18 +108,7 @@ fun GamePlayingField(
                     bullets[id] = bullet
                     val angle = squad.trooper1.aimingDirection
                     launch {
-                        for (bulletStep in 0..100) {
-                            val oldPos = bullets.getValue(id).position
-                            val update = calculateBulletUpdate(angle)
-                            bullets[id] =
-                                Bullet(
-                                    oldPos.copy(
-                                        x = oldPos.x + update.x.dp,
-                                        y = oldPos.y + update.y.dp
-                                    )
-                                )
-                            awaitFrame()
-                        }
+                        sendBullet(bullets, id, angle)
                         bullets.remove(id)
                     }
                 }
@@ -126,6 +117,26 @@ fun GamePlayingField(
                 delay(100L)
             }
         }
+    }
+}
+
+
+private suspend fun sendBullet(
+    bullets: SnapshotStateMap<String, Bullet>,
+    id: String,
+    angle: Float
+) {
+    for (bulletStep in 0..100) {
+        val oldPos = bullets.getValue(id).position
+        val update = calculateBulletUpdate(angle)
+        bullets[id] =
+            Bullet(
+                oldPos.copy(
+                    x = oldPos.x + update.x.dp,
+                    y = oldPos.y + update.y.dp
+                )
+            )
+        awaitFrame()
     }
 }
 
