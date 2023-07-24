@@ -14,6 +14,7 @@ import com.game.frodojourney.app.canvas.calculateAngle
 import com.game.frodojourney.app.canvas.distance
 import com.game.frodojourney.app.character.CharacterTurned
 import com.game.frodojourney.app.character.enemies.FixedSizeSquad
+import com.game.frodojourney.app.character.enemies.Trooper
 import com.game.frodojourney.app.character.enemies.TrooperAim
 import com.game.frodojourney.app.character.mainCharacter.Luke
 import com.game.frodojourney.app.character.mainCharacter.LukeRun
@@ -34,6 +35,7 @@ data class MapState(
 
 const val borderToScreen = 30f
 const val borderToScreenTwoTimes = 60f
+const val awarenessBorder = 200f
 
 @Stable
 data class MainViewModel(
@@ -46,47 +48,51 @@ data class MainViewModel(
     private val _squad: MutableStateFlow<FixedSizeSquad> = MutableStateFlow(FixedSizeSquad()),
     val squad: StateFlow<FixedSizeSquad> = _squad.asStateFlow(),
     private var movementJob: Job? = null,
-    private var animationJob: Job? = null
+    private var animationJob: Job? = null,
 ) : ViewModel() {
-
-    private fun trooper1FollowTarget() {
+    private fun turnAndAim(): Triple<CharacterTurned, TrooperAim, Float> {
         val angle = calculateAngle(_squad.value.trooper1.position, _character.value.position)
         val (turn, aim) = calculateTurnAndAim(angle)
-        val trooper = _squad.value.trooper1.copy(turned = turn, aiming = aim)
-        _squad.value = _squad.value.copy(trooper1 = trooper)
+        return Triple(turn, aim, angle)
     }
 
-    private fun setTrooper1Fighting(fighting: Boolean) {
-        val trooper1 = _squad.value.trooper1.copy(isFighting = fighting)
-        _squad.value = _squad.value.copy(trooper1 = trooper1)
+    private fun trooper1FollowTarget() {
+        val (turn, aim, angle) = turnAndAim()
+        val trooper = _squad.value.trooper1.copy(
+            turned = turn,
+            aiming = aim,
+            image = aim.toImage(),
+            aimingDirection = angle
+        )
+        _squad.value = _squad.value.copy(trooper1 = trooper)
     }
 
     private fun checkTrooper1Distance() {
         val pos1 = _squad.value.trooper1.position
         val pos2 = _character.value.position
-        if (distance(pos1, pos2) < 230f) {
-            setTrooper1Fighting(true)
+        if (distance(pos1, pos2) < awarenessBorder) {
             triggerTrooper1()
         } else {
-            setTrooper1Fighting(false)
+            calmTrooper1()
         }
     }
 
+    private fun calmTrooper1() {
+        val trooper = _squad.value.trooper1.copy(isAlarmed = false)
+        _squad.value = _squad.value.copy(trooper1 = trooper)
+    }
+
     private fun triggerTrooper1() {
-        if (_squad.value.trooper1.animationJob?.isActive != true) {
-            _squad.value.trooper1.animationJob = viewModelScope.launch {
-                val images = _squad.value.trooper1.aiming.toImages()
-                for (frame in images) {
-                    val newTrooper = _squad.value.trooper1.copy(image = frame)
-                    _squad.value = _squad.value.copy(trooper1 = newTrooper)
-                    delay(100L)
-                }
-            }
-        }
+        val trooper = _squad.value.trooper1.copy(isAlarmed = true)
+        _squad.value = _squad.value.copy(trooper1 = trooper)
     }
 
     private fun setFight(fighting: Boolean) {
         _character.value = _character.value.copyWeaponAware(isFighting = fighting)
+    }
+
+    fun setTrooper1(trooper: Trooper) {
+        _squad.value = _squad.value.copy(trooper1 = trooper)
     }
 
 
@@ -285,6 +291,5 @@ private fun calculateTurnAndAim(value: Float): Pair<CharacterTurned, TrooperAim>
         in 337.5f..360f -> TrooperAim.SIDE
         else -> TrooperAim.SIDE
     }
-    println("Aim is: $aim")
-    return turn to aim
+    return Pair(turn, aim)
 }

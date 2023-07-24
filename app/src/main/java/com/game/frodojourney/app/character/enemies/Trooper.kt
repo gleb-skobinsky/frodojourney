@@ -15,6 +15,8 @@ data class Trooper(
     val imageIndex: Int = 0,
     override val turned: CharacterTurned = CharacterTurned.RIGHT,
     val aiming: TrooperAim = TrooperAim.DOWN,
+    val isAlarmed: Boolean = false,
+    val aimingDirection: Float = 0f,
     override val isMoving: Boolean = false,
     override val weapon: Weapon = Weapon(DpCoordinates.Zero, WeaponsResources.largeRifle),
     override val isFighting: Boolean = false,
@@ -43,5 +45,13 @@ enum class TrooperAim {
         SIDE -> TrooperShootingSide.images
         DOWNSIDE -> TrooperShootingDownSide.images
         DOWN -> TrooperShootingDown.images
+    }
+
+    fun toImage(): ImageBitmap = when (this) {
+        UP -> TrooperShootingUp.images[0]
+        UPSIDE -> TrooperShootingUpSide.images[0]
+        SIDE -> TrooperShootingSide.images[0]
+        DOWNSIDE -> TrooperShootingDownSide.images[0]
+        DOWN -> TrooperShootingDown.images[0]
     }
 }
