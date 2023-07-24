@@ -9,11 +9,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import com.game.frodojourney.app.canvas.ViewData
+import com.game.frodojourney.app.character.WeaponsResources
 import com.game.frodojourney.app.character.enemies.Bullet
 import com.game.frodojourney.app.character.enemies.FixedSizeSquad
 import com.game.frodojourney.app.character.enemies.bulletSpeed
@@ -83,10 +85,9 @@ fun GamePlayingField(
 
         with(viewData) {
             for (bullet in bullets.values) {
-                drawRect(
-                    color = Color.Red,
-                    topLeft = bullet.position.toOffset(),
-                    size = Size(20f, 20f)
+                drawBullet(
+                    offset = bullet.position.toOffset(),
+                    rotation = squad.trooper1.aimingDirection
                 )
             }
         }
@@ -100,7 +101,7 @@ fun GamePlayingField(
             val images = squad.trooper1.aiming.toImages()
             images.forEachIndexed { i, frame ->
                 if (i == 4) {
-                    val bullet = Bullet(squad.trooper1.position)
+                    val bullet = Bullet(squad.trooper1.center)
                     val id = generateId()
                     bullets[id] = bullet
                     val angle = squad.trooper1.aimingDirection
@@ -144,3 +145,14 @@ fun Float.checkIfObtuse() = when (this) {
     else -> 1 to 1
 }
 
+fun DrawScope.drawBullet(
+    offset: Offset,
+    rotation: Float
+) {
+    rotate(rotation, pivot = offset) {
+        drawImage(
+            image = WeaponsResources.bullet,
+            topLeft = offset,
+        )
+    }
+}

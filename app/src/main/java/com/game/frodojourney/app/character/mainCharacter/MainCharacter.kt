@@ -27,6 +27,8 @@ data class MainHero(
     )
 ) : GenericCharacter {
 
+    val center = DpCoordinates(position.x + 20.dp, position.y + 30.dp)
+
     fun copyWeaponAware(
         position: DpCoordinates = this.position,
         turned: CharacterTurned = this.turned,

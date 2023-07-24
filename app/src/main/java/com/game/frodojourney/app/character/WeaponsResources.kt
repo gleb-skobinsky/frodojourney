@@ -8,9 +8,11 @@ import com.game.frodojourney.app.canvas.imageResourceWithSize
 object WeaponsResources {
     lateinit var lightSaber: ImageBitmap
     lateinit var largeRifle: ImageBitmap
+    lateinit var bullet: ImageBitmap
 
     fun load(resources: Resources) {
         lightSaber = ImageBitmap.imageResourceWithSize(R.drawable.lightsaber_only, resources)
         largeRifle = ImageBitmap.imageResourceWithSize(R.drawable.clone_blaster, resources)
+        bullet = ImageBitmap.imageResourceWithSize(R.drawable.blaster, resources)
     }
 }

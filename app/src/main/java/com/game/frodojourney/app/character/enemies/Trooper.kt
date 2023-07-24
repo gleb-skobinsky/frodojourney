@@ -23,6 +23,8 @@ data class Trooper(
     var animationJob: Job? = null
 ) : GenericCharacter {
 
+    val center = DpCoordinates(position.x + 20.dp, position.y + 30.dp)
+
     companion object {
         fun createDefault(x: Int, y: Int) = Trooper(
             position = DpCoordinates(x = x.dp, y = y.dp),

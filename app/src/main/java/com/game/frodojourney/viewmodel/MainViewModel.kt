@@ -35,7 +35,7 @@ data class MapState(
 
 const val borderToScreen = 30f
 const val borderToScreenTwoTimes = 60f
-const val awarenessBorder = 200f
+const val awarenessBorder = 300f
 
 @Stable
 data class MainViewModel(
@@ -51,7 +51,10 @@ data class MainViewModel(
     private var animationJob: Job? = null,
 ) : ViewModel() {
     private fun turnAndAim(): Triple<CharacterTurned, TrooperAim, Float> {
-        val angle = calculateAngle(_squad.value.trooper1.position, _character.value.position)
+        val angle = calculateAngle(
+            coordinate1 = _squad.value.trooper1.center,
+            coordinate2 = _character.value.center
+        )
         val (turn, aim) = calculateTurnAndAim(angle)
         return Triple(turn, aim, angle)
     }

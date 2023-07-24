@@ -21,8 +21,9 @@ interface GenericCharacter : Positioned {
     val isMoving: Boolean
     val weapon: Weapon
 
-    fun characterBaseLine(density: Density) =
-        with(density) { position.y.toPx() + image.height }
+    fun characterBaseLine(density: Density): Float {
+        with(density) { return position.y.toPx() + image.height }
+    }
 
     private fun ViewData.calculateWeaponOffset(): Offset {
         val weaponOffset = weapon.position.toOffset()
