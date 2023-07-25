@@ -12,5 +12,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "Frodo Journey"
+rootProject.name = "Dark force"
 include(":app")

@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.game.frodojourney"
+    namespace = "com.game.darkforce"
     compileSdk = 33
 
     defaultConfig {
-        applicationId = "com.game.frodojourney"
+        applicationId = "com.game.darkforce"
         minSdk = 24
         targetSdk = 33
         versionCode = 1
