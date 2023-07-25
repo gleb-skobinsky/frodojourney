@@ -38,7 +38,7 @@ fun App(viewModel: MainViewModel) {
     val character by viewModel.character.collectAsState()
     val mapState by viewModel.mapState.collectAsState()
     val viewData by viewModel.viewData.collectAsState()
-    val squad by viewModel.squad.collectAsState()
+    val squad = viewModel.squad
     val hp by viewModel.hp.collectAsState()
     Box(
         modifier = Modifier.fillMaxSize()

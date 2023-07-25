@@ -14,6 +14,7 @@ object TrooperShootingDownSide : Animation() {
         R.drawable.trooper_down_side1,
         R.drawable.trooper_down_side2,
         R.drawable.trooper_down_side3,
+        R.drawable.trooper_down_side3,
         R.drawable.trooper_down_side4,
         R.drawable.trooper_down_side5,
         R.drawable.trooper_down_side6,

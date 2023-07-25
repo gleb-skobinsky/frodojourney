@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import com.game.frodojourney.app.canvas.ViewData
 import com.game.frodojourney.app.character.enemies.Bullet
-import com.game.frodojourney.app.character.enemies.FixedSizeSquad
+import com.game.frodojourney.app.character.enemies.ImperialSquad
 import com.game.frodojourney.app.character.enemies.bulletSpeed
 import com.game.frodojourney.app.character.enemies.generateId
 import com.game.frodojourney.app.character.mainCharacter.MainHero
@@ -36,7 +36,7 @@ fun GamePlayingField(
     viewModel: MainViewModel,
     mapState: MapState,
     character: MainHero,
-    squad: FixedSizeSquad
+    squad: ImperialSquad
 ) {
     val configuration = LocalConfiguration.current
     val objectsToDraw = remember(mapState.map.objects, character) {
@@ -70,7 +70,7 @@ fun GamePlayingField(
             draw(viewData)
         }
 
-        for (trooper in squad) {
+        for (trooper in squad.values) {
             with(trooper) {
                 draw(viewData)
             }
@@ -90,33 +90,35 @@ fun GamePlayingField(
         }
 
     }
-    LaunchedEffect(
-        key1 = squad.trooper1.isAlarmed,
-        key2 = squad.trooper1.aimingDirection
-    ) {
-        while (squad.trooper1.isAlarmed) {
-            val images = squad.trooper1.aiming.toImages()
-            images.forEachIndexed { i, frame ->
-                if (i == 4) {
-                    val angle = squad.trooper1.aimingDirection
-                    val bullet = Bullet(squad.trooper1.center, angle)
-                    val id = generateId()
-                    bullets[id] = bullet
-                    val update = calculateBulletUpdate(angle)
-                    launch(NonCancellable) {
-                        sendBullet(
-                            id = id,
-                            bullets = bullets,
-                            update = update,
-                            viewModel = viewModel,
-                            resistible = true
-                        )
-                        bullets.remove(id)
+    for ((trooperId, trooper) in squad.entries) {
+        LaunchedEffect(
+            key1 = trooper.isAlarmed,
+            key2 = trooper.aimingDirection
+        ) {
+            while (trooper.isAlarmed) {
+                val images = trooper.aiming.toImages()
+                images.forEachIndexed { i, frame ->
+                    if (i == 4) {
+                        val angle = trooper.aimingDirection
+                        val bullet = Bullet(trooper.center, angle)
+                        val id = generateId()
+                        bullets[id] = bullet
+                        val update = calculateBulletUpdate(angle)
+                        launch(NonCancellable) {
+                            sendBullet(
+                                id = id,
+                                bullets = bullets,
+                                update = update,
+                                viewModel = viewModel,
+                                resistible = true
+                            )
+                            bullets.remove(id)
+                        }
                     }
+                    val newTrooper = trooper.copy(image = frame)
+                    viewModel.setTrooper1(trooperId, newTrooper)
+                    delay(50L)
                 }
-                val newTrooper = squad.trooper1.copy(image = frame)
-                viewModel.setTrooper1(newTrooper)
-                delay(100L)
             }
         }
     }
