@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -25,6 +26,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.game.frodojourney.R
 import com.game.frodojourney.app.canvas.toOffset
 import com.game.frodojourney.app.composables.GamePlayingField
@@ -37,6 +39,7 @@ fun App(viewModel: MainViewModel) {
     val mapState by viewModel.mapState.collectAsState()
     val viewData by viewModel.viewData.collectAsState()
     val squad by viewModel.squad.collectAsState()
+    val hp by viewModel.hp.collectAsState()
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -50,6 +53,12 @@ fun App(viewModel: MainViewModel) {
         LightSaberController(viewModel)
         MainGamingController(
             viewModel = viewModel
+        )
+        Text(
+            text = hp.toString(),
+            modifier = Modifier.align(Alignment.TopStart),
+            color = Color.White,
+            fontSize = 20.sp
         )
     }
 }

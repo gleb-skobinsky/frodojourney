@@ -8,12 +8,13 @@ import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.unit.Density
 import com.game.frodojourney.app.canvas.DpCoordinates
+import com.game.frodojourney.app.canvas.Drawing
 import com.game.frodojourney.app.canvas.ViewData
 import com.game.frodojourney.app.character.CharacterTurned
 import com.game.frodojourney.app.character.Weapon
 import com.game.frodojourney.app.common.Positioned
 
-interface GenericCharacter : Positioned {
+interface GenericCharacter : Positioned, Drawing {
     override val position: DpCoordinates
     override val image: ImageBitmap
     val turned: CharacterTurned
@@ -33,7 +34,7 @@ interface GenericCharacter : Positioned {
         )
     }
 
-    fun DrawScope.draw(viewData: ViewData) {
+    override fun DrawScope.draw(viewData: ViewData) {
         with(viewData) {
             val offset = position.toOffset()
             val center = offset.x + (image.width / 2f)

@@ -29,6 +29,12 @@ data class MainHero(
 
     val center = DpCoordinates(position.x + 20.dp, position.y + 30.dp)
 
+    operator fun contains(value: DpCoordinates): Boolean {
+        val containsX = value.x in (center.x - 20.dp)..(center.x + 20.dp)
+        val containsY = value.y in (center.y - 20.dp)..(center.y + 20.dp)
+        return containsX && containsY
+    }
+
     fun copyWeaponAware(
         position: DpCoordinates = this.position,
         turned: CharacterTurned = this.turned,

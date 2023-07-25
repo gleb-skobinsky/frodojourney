@@ -47,9 +47,18 @@ data class MainViewModel(
     val character: StateFlow<MainHero> = _character.asStateFlow(),
     private val _squad: MutableStateFlow<FixedSizeSquad> = MutableStateFlow(FixedSizeSquad()),
     val squad: StateFlow<FixedSizeSquad> = _squad.asStateFlow(),
+    private val _hp: MutableStateFlow<Int> = MutableStateFlow(300),
+    val hp: StateFlow<Int> = _hp.asStateFlow(),
     private var movementJob: Job? = null,
     private var animationJob: Job? = null,
 ) : ViewModel() {
+
+    fun minusHp() {
+        if (_hp.value > 0) {
+            _hp.value--
+        }
+    }
+
     private fun turnAndAim(): Triple<CharacterTurned, TrooperAim, Float> {
         val angle = calculateAngle(
             coordinate1 = _squad.value.trooper1.center,
@@ -98,17 +107,22 @@ data class MainViewModel(
         _squad.value = _squad.value.copy(trooper1 = trooper)
     }
 
+    fun setWeaponRotation(value: Float) {
+        val prevWeapon = _character.value.weapon
+        _character.value =
+            _character.value.copyWeaponAware(weapon = prevWeapon.copy(rotation = value))
+    }
+
 
     fun fightWithLightSaber() {
         viewModelScope.launch {
             setFrame(Luke.removeWeapon())
             setFight(true)
             for (i in (1..15)) {
-                val prevWeapon = _character.value.weapon
-                _character.value =
-                    _character.value.copyWeaponAware(weapon = prevWeapon.copy(rotation = i * 24f))
+                setWeaponRotation(i * 24f)
                 awaitFrame()
             }
+            setWeaponRotation(0f)
             setFight(false)
             setFrame(LukeRun.reset())
         }

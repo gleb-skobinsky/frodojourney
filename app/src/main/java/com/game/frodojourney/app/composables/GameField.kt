@@ -10,13 +10,10 @@ import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import com.game.frodojourney.app.canvas.ViewData
-import com.game.frodojourney.app.character.WeaponsResources
 import com.game.frodojourney.app.character.enemies.Bullet
 import com.game.frodojourney.app.character.enemies.FixedSizeSquad
 import com.game.frodojourney.app.character.enemies.bulletSpeed
@@ -24,6 +21,7 @@ import com.game.frodojourney.app.character.enemies.generateId
 import com.game.frodojourney.app.character.mainCharacter.MainHero
 import com.game.frodojourney.viewmodel.MainViewModel
 import com.game.frodojourney.viewmodel.MapState
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -84,31 +82,35 @@ fun GamePlayingField(
             drawObjects(objectsToDraw, viewData)
         }
 
-        with(viewData) {
-            for (bullet in bullets.values) {
-                drawBullet(
-                    offset = bullet.position.toOffset(),
-                    rotation = squad.trooper1.aimingDirection
-                )
+
+        for (bullet in bullets.values) {
+            with(bullet) {
+                draw(viewData)
             }
         }
+
     }
     LaunchedEffect(
         key1 = squad.trooper1.isAlarmed,
-        key2 = squad.trooper1.aiming,
-        key3 = character.position
+        key2 = squad.trooper1.aimingDirection
     ) {
-        bullets.clear()
-        if (squad.trooper1.isAlarmed) {
+        while (squad.trooper1.isAlarmed) {
             val images = squad.trooper1.aiming.toImages()
             images.forEachIndexed { i, frame ->
                 if (i == 4) {
-                    val bullet = Bullet(squad.trooper1.center)
+                    val angle = squad.trooper1.aimingDirection
+                    val bullet = Bullet(squad.trooper1.center, angle)
                     val id = generateId()
                     bullets[id] = bullet
-                    val angle = squad.trooper1.aimingDirection
-                    launch {
-                        sendBullet(bullets, id, angle)
+                    val update = calculateBulletUpdate(angle)
+                    launch(NonCancellable) {
+                        sendBullet(
+                            id = id,
+                            bullets = bullets,
+                            update = update,
+                            viewModel = viewModel,
+                            resistible = true
+                        )
                         bullets.remove(id)
                     }
                 }
@@ -122,22 +124,57 @@ fun GamePlayingField(
 
 
 private suspend fun sendBullet(
-    bullets: SnapshotStateMap<String, Bullet>,
     id: String,
-    angle: Float
+    bullets: SnapshotStateMap<String, Bullet>,
+    update: Offset,
+    viewModel: MainViewModel,
+    resistible: Boolean
 ) {
     for (bulletStep in 0..100) {
-        val oldPos = bullets.getValue(id).position
-        val update = calculateBulletUpdate(angle)
-        bullets[id] =
-            Bullet(
-                oldPos.copy(
-                    x = oldPos.x + update.x.dp,
-                    y = oldPos.y + update.y.dp
-                )
-            )
+        val oldBullet = bullets.getValue(id)
+        val oldPos = oldBullet.position
+        val newPos = oldPos.copy(
+            x = oldPos.x + update.x.dp,
+            y = oldPos.y + update.y.dp
+        )
+        if (resistible && newPos in viewModel.character.value) {
+            bullets.remove(id)
+            if (viewModel.character.value.isFighting) {
+                resistBullet(oldBullet, bullets, update, viewModel)
+            } else {
+                viewModel.minusHp()
+            }
+            break
+        }
+        bullets[id] = oldBullet.copy(
+            position = newPos
+        )
         awaitFrame()
     }
+    bullets.remove(id)
+}
+
+private suspend fun resistBullet(
+    oldBullet: Bullet,
+    bullets: SnapshotStateMap<String, Bullet>,
+    update: Offset,
+    viewModel: MainViewModel
+) {
+    val newBullet = oldBullet.copy(rotation = oldBullet.rotation.mirror())
+    val newId = generateId()
+    bullets[newId] = newBullet
+    sendBullet(
+        id = newId,
+        bullets = bullets,
+        update = update.copy(x = update.x * -1),
+        viewModel = viewModel,
+        resistible = false
+    )
+}
+
+fun Float.mirror(): Float {
+    val rem = this % 90
+    return this - (rem * 2)
 }
 
 fun calculateBulletUpdate(angle: Float): Offset {
@@ -149,21 +186,7 @@ fun calculateBulletUpdate(angle: Float): Offset {
 }
 
 fun Float.checkIfObtuse() = when (this) {
-    in 0f..90f -> 1 to 1
-    in 90f..180f -> -1 to 1
-    in 180f..270f -> -1 to 1
-    in 270f..360f -> 1 to 1
+    in 90f..270f -> -1 to 1
     else -> 1 to 1
 }
 
-fun DrawScope.drawBullet(
-    offset: Offset,
-    rotation: Float
-) {
-    rotate(rotation, pivot = offset) {
-        drawImage(
-            image = WeaponsResources.bullet,
-            topLeft = offset,
-        )
-    }
-}
