@@ -36,6 +36,7 @@ data class MapState(
 const val borderToScreen = 30f
 const val borderToScreenTwoTimes = 60f
 const val awarenessBorder = 300f
+const val killBorder = 50f
 
 @Stable
 data class MainViewModel(
@@ -107,7 +108,7 @@ data class MainViewModel(
         _squad.value = _squad.value.copy(trooper1 = trooper)
     }
 
-    fun setWeaponRotation(value: Float) {
+    private fun setSaberRotation(value: Float) {
         val prevWeapon = _character.value.weapon
         _character.value =
             _character.value.copyWeaponAware(weapon = prevWeapon.copy(rotation = value))
@@ -118,11 +119,11 @@ data class MainViewModel(
         viewModelScope.launch {
             setFrame(Luke.removeWeapon())
             setFight(true)
-            for (i in (1..15)) {
-                setWeaponRotation(i * 24f)
+            for (i in (1..30)) {
+                setSaberRotation(i * 12f)
                 awaitFrame()
             }
-            setWeaponRotation(0f)
+            setSaberRotation(0f)
             setFight(false)
             setFrame(LukeRun.reset())
         }
@@ -157,8 +158,10 @@ data class MainViewModel(
         if (movementJob == null && animationJob == null) {
             launchMovementCoroutine()
         }
+
         trooper1FollowTarget()
         checkTrooper1Distance()
+
     }
 
     fun stopMovement() {

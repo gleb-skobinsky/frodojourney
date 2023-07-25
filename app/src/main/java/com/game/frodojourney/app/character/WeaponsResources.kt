@@ -13,6 +13,6 @@ object WeaponsResources {
     fun load(resources: Resources) {
         lightSaber = ImageBitmap.imageResourceWithSize(R.drawable.lightsaber_only, resources)
         largeRifle = ImageBitmap.imageResourceWithSize(R.drawable.clone_blaster, resources)
-        bullet = ImageBitmap.imageResourceWithSize(R.drawable.blaster, resources)
+        bullet = ImageBitmap.imageResourceWithSize(R.drawable.bullet, resources)
     }
 }
