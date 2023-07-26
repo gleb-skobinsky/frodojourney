@@ -54,6 +54,8 @@ data class MainViewModel(
     val hp: StateFlow<Int> = _hp.asStateFlow(),
     private val _yoda: MutableStateFlow<Yoda?> = MutableStateFlow(null),
     val yoda: StateFlow<Yoda?> = _yoda.asStateFlow(),
+    private val _openRiddle: MutableStateFlow<Boolean> = MutableStateFlow(false),
+    val openRiddle: StateFlow<Boolean> = _openRiddle.asStateFlow(),
     private var movementJob: Job? = null,
     private var animationJob: Job? = null,
 ) : ViewModel() {
@@ -216,6 +218,11 @@ data class MainViewModel(
 
         troopersFollowTarget()
         checkTroopersDistance()
+        yoda.value?.let {
+            if (distance(character.value.position, it.position) < 70) {
+                _openRiddle.value = true
+            }
+        }
     }
 
     fun stopMovement() {

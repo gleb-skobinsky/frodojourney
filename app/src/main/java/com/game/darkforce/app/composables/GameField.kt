@@ -84,30 +84,34 @@ fun GamePlayingField(
             drawObjects(objectsToDraw, viewData)
         }
 
-
         for (bullet in bullets.values) {
             with(bullet) {
                 draw(viewData)
             }
         }
-        yoda?.let { with(it) { draw(viewData) } }
 
+        yoda?.let {
+            with(it) {
+                draw(viewData)
+            }
+        }
     }
     for ((trooperId, trooper) in squad.entries) {
-        LaunchedEffect(
-            key1 = trooper.isAlarmed,
-            key2 = trooper.aimingDirection,
-            key3 = trooper.isDying
-        ) {
-            while (trooper.isAlarmed && !trooper.isDying) {
-                val images = trooper.aiming.toImages()
-                images.forEachIndexed { i, frame ->
-                    if (i == 4) {
-                        launchBullet(trooper, bullets, viewModel)
+        if (!trooper.isDying) {
+            LaunchedEffect(
+                key1 = trooper.isAlarmed,
+                key2 = trooper.aimingDirection
+            ) {
+                while (trooper.isAlarmed) {
+                    val images = trooper.aiming.toImages()
+                    images.forEachIndexed { i, frame ->
+                        if (i == 4) {
+                            launchBullet(trooper, bullets, viewModel)
+                        }
+                        val newTrooper = trooper.copy(image = frame)
+                        viewModel.setTrooper1(trooperId, newTrooper)
+                        delay(50L)
                     }
-                    val newTrooper = trooper.copy(image = frame)
-                    viewModel.setTrooper1(trooperId, newTrooper)
-                    delay(50L)
                 }
             }
         }

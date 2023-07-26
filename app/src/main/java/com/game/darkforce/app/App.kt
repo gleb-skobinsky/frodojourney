@@ -1,6 +1,8 @@
 package com.game.darkforce.app
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -23,6 +25,9 @@ import androidx.compose.ui.graphics.PaintingStyle
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.PointerInputChange
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
@@ -36,8 +41,11 @@ import com.game.darkforce.viewmodel.MainViewModel
 @Composable
 fun App(viewModel: MainViewModel) {
     val hp by viewModel.hp.collectAsState()
+    val overlayOpen by viewModel.openRiddle.collectAsState()
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .gesturesDisabled(overlayOpen)
     ) {
         GamePlayingField(
             viewModel = viewModel
@@ -46,13 +54,54 @@ fun App(viewModel: MainViewModel) {
         MainGamingController(
             viewModel = viewModel
         )
-        Text(
-            text = hp.toString(),
-            modifier = Modifier.align(Alignment.TopStart),
-            color = Color.White,
-            fontSize = 20.sp
-        )
+        HpText(hp)
+        Overlay(overlayOpen)
     }
+}
+
+@Composable
+private fun Overlay(overlayOpen: Boolean) {
+    AnimatedVisibility(visible = overlayOpen) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.1f))
+        ) {
+            Text(
+                text = "Неплохо, мой падаван",
+                color = Color.White,
+                modifier = Modifier
+                    .align(Alignment.Center)
+            )
+        }
+    }
+}
+
+fun Modifier.gesturesDisabled(disabled: Boolean = true) =
+    if (disabled) {
+        pointerInput(Unit) {
+            awaitPointerEventScope {
+                // we should wait for all new pointer events
+                while (true) {
+                    awaitPointerEvent(pass = PointerEventPass.Initial)
+                        .changes
+                        .forEach(PointerInputChange::consume)
+                }
+            }
+        }
+    } else {
+        this
+    }
+
+
+@Composable
+private fun BoxScope.HpText(hp: Int) {
+    Text(
+        text = hp.toString(),
+        modifier = Modifier.Companion.align(Alignment.TopStart),
+        color = Color.White,
+        fontSize = 20.sp
+    )
 }
 
 @Composable

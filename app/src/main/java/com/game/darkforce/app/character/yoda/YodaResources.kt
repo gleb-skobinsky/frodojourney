@@ -8,6 +8,6 @@ import com.game.darkforce.app.canvas.imageResourceWithSize
 object YodaResources {
     lateinit var skin: ImageBitmap
     fun load(resources: Resources) {
-        skin = ImageBitmap.imageResourceWithSize(R.drawable.yoda_s, resources)
+        skin = ImageBitmap.imageResourceWithSize(R.drawable.yoda_transp_s, resources)
     }
 }
