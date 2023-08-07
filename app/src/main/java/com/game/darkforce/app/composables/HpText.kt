@@ -14,6 +14,6 @@ fun BoxScope.HpText(hp: Int) {
         text = hp.toString(),
         modifier = Modifier.align(Alignment.TopStart),
         color = Color.White,
-        fontSize = 20.sp
+        fontSize = 30.sp
     )
 }
