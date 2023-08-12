@@ -55,7 +55,7 @@ data class MainViewModel(
     val hp: StateFlow<Int> = _hp.asStateFlow(),
     private val _yoda: MutableStateFlow<Yoda?> = MutableStateFlow(null),
     val yoda: StateFlow<Yoda?> = _yoda.asStateFlow(),
-    private val _overlayOpen: MutableStateFlow<Boolean> = MutableStateFlow(true),
+    private val _overlayOpen: MutableStateFlow<Boolean> = MutableStateFlow(false),
     val overlayOpen: StateFlow<Boolean> = _overlayOpen.asStateFlow(),
     private var movementJob: Job? = null,
     private var animationJob: Job? = null,
@@ -181,9 +181,11 @@ data class MainViewModel(
             ) < killBorder
         }
         killedTrooper?.let { (id, trooper) ->
-            val newTrooper = trooper.copy(isDying = true)
-            squad[id] = newTrooper
-            killTrooper(id, newTrooper)
+            if (!trooper.isDying) {
+                val newTrooper = trooper.copy(isDying = true)
+                squad[id] = newTrooper
+                killTrooper(id, newTrooper)
+            }
         }
     }
 
