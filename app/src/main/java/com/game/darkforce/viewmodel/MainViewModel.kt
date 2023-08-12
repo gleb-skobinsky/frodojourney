@@ -30,6 +30,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class MapState(
@@ -59,7 +60,13 @@ data class MainViewModel(
     val overlayOpen: StateFlow<Boolean> = _overlayOpen.asStateFlow(),
     private var movementJob: Job? = null,
     private var animationJob: Job? = null,
+    private val _currentQuestion: MutableStateFlow<Int> = MutableStateFlow(-1),
+    val currentQuestion: StateFlow<Int> = _currentQuestion.asStateFlow()
 ) : ViewModel() {
+
+    fun incrementQuestion() {
+        _currentQuestion.update { it + 1 }
+    }
 
     private fun createYoda() {
         _yoda.value = Yoda()

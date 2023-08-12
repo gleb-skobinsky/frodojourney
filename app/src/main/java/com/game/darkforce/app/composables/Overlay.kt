@@ -14,6 +14,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,12 +28,11 @@ import androidx.compose.ui.unit.sp
 import com.game.darkforce.fonts.Robotronika
 import com.game.darkforce.riddles.AnswerVariant
 import com.game.darkforce.riddles.riddles
+import com.game.darkforce.viewmodel.MainViewModel
 
 @Composable
-fun Overlay(overlayOpen: Boolean) {
-    var currentQuestion: Int by remember {
-        mutableStateOf(-1)
-    }
+fun Overlay(overlayOpen: Boolean, viewModel: MainViewModel) {
+    val currentQuestion by viewModel.currentQuestion.collectAsState()
     AnimatedVisibility(visible = overlayOpen) {
         RiddlesInterface {
             Box(
@@ -40,7 +40,7 @@ fun Overlay(overlayOpen: Boolean) {
                     .size(250.dp, 500.dp)
                     .align(Alignment.Center)
             ) {
-                UiQuestion(currentQuestion) { currentQuestion++ }
+                UiQuestion(currentQuestion) { viewModel.incrementQuestion() }
             }
         }
     }

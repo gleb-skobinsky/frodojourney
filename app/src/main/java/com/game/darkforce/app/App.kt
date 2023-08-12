@@ -27,6 +27,6 @@ fun App(viewModel: MainViewModel) {
             viewModel = viewModel
         )
         // HpText(hp)
-        Overlay(overlayOpen)
+        Overlay(overlayOpen, viewModel)
     }
 }
